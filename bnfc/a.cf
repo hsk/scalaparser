@@ -1,0 +1,6 @@
+EAdd. Exp ::= Exp2 [ "+" Exp2 ] * ;
+EMul. Exp2 ::= Exp2 "*" Exp3 ;
+EInt. Exp3 ::= Integer ;
+_.    Exp ::= Exp2 ;
+_.    Exp2 ::= Exp3 ;
+_.    Exp3 ::= "(" Exp ")" ;

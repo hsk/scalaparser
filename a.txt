@@ -1,0 +1,328 @@
+menhir parser.mly
+Warning: 108 states have shift/reduce conflicts.
+Warning: 51 states have reduce/reduce conflicts.
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(NL) -> 
+option(refinement) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(blockStat) -> 
+option(id_dot) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(blockStat) -> 
+option(id_dot) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(blockStat) -> 
+option(exprs) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "parser.mly", line 101, characters 22-25:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(colon_type) -> 
+stableId -> ID 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "parser.mly", line 101, characters 22-25:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(colon_type) -> 
+stableId -> ID 
+File "parser.mly", line 152, characters 22-54:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+expr1 -> IF LPAREN expr RPAREN list(NL) expr 
+option(SEMI) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(blockStat) -> 
+option(id_dot) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(blockStat) -> 
+option(id_dot) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(blockStat) -> 
+option(id_dot) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(blockStat) -> 
+option(id_dot) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(blockStat) -> 
+option(id_dot) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(blockStat) -> 
+option(id_dot) -> 
+File "parser.mly", line 296, characters 22-31:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+localModifier -> IMPLICIT 
+option(CASE) -> 
+File "parser.mly", line 296, characters 22-31:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+localModifier -> IMPLICIT 
+option(CASE) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(EXTENDS) -> 
+option(classTemplateOpt) -> 
+File "parser.mly", line 276, characters 22-40:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+classParamClauses -> list(classParamClause) 
+option(NL) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(blockStat) -> 
+option(id_dot) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(blockStat) -> 
+option(id_dot) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "parser.mly", line 265, characters 22-35:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(NL) -> 
+paramClauses -> list(paramClause) 
+File "parser.mly", line 297, characters 22-27:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+localModifier -> LAZY 
+option(CASE) -> 
+File "parser.mly", line 297, characters 22-27:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+localModifier -> LAZY 
+option(CASE) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(NL) -> 
+option(templateBody) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(EXTENDS) -> 
+option(traitTemplateOpt) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(blockStat) -> 
+option(id_dot) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(blockStat) -> 
+option(id_dot) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(blockStat) -> 
+option(id_dot) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(blockStat) -> 
+option(id_dot) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 114, characters 4-4:
+File "parser.mly", line 231, characters 22-36:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+list(id_nl_simplePattern) -> 
+pattern3 -> simplePattern 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 114, characters 4-4:
+File "parser.mly", line 231, characters 22-36:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+list(id_nl_simplePattern) -> 
+pattern3 -> simplePattern 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 114, characters 4-4:
+File "parser.mly", line 231, characters 22-36:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+list(id_nl_simplePattern) -> 
+pattern3 -> simplePattern 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 114, characters 4-4:
+File "parser.mly", line 231, characters 22-36:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+list(id_nl_simplePattern) -> 
+pattern3 -> simplePattern 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 114, characters 4-4:
+File "parser.mly", line 231, characters 22-36:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+list(id_nl_simplePattern) -> 
+pattern3 -> simplePattern 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 114, characters 4-4:
+File "parser.mly", line 231, characters 22-36:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+list(id_nl_simplePattern) -> 
+pattern3 -> simplePattern 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 114, characters 4-4:
+File "parser.mly", line 231, characters 22-36:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+list(id_nl_simplePattern) -> 
+pattern3 -> simplePattern 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 114, characters 4-4:
+File "parser.mly", line 231, characters 22-36:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+list(id_nl_simplePattern) -> 
+pattern3 -> simplePattern 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(blockStat) -> 
+option(id_dot) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(blockStat) -> 
+option(id_dot) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "parser.mly", line 187, characters 22-27:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(colon_type) -> 
+simpleExpr1 -> UBAR 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "parser.mly", line 187, characters 22-27:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(colon_type) -> 
+simpleExpr1 -> UBAR 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(blockStat) -> 
+option(id_dot) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(blockStat) -> 
+option(id_dot) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(blockStat) -> 
+option(exprs) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(exprs_comma) -> 
+option(id_dot) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(exprs_comma) -> 
+option(id_dot) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(expr) -> 
+option(id_dot) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(expr) -> 
+option(id_dot) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(blockStat) -> 
+option(id_dot) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(blockStat) -> 
+option(id_dot) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(blockStat) -> 
+option(exprs) -> 
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+option(NL) -> 
+option(templateBody) -> 
+File "parser.mly", line 109, characters 22-32:
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+will not resolve reduce/reduce conflict between
+productions that originate in distinct source files:
+functionArgTypes -> infixType 
+option(existentialClause) -> 
+Warning: 407 shift/reduce conflicts were arbitrarily resolved.
+Warning: 148 reduce/reduce conflicts were arbitrarily resolved.
+Warning: 101 states have an end-of-stream conflict.
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+Warning: production option(IMPLICIT) -> is never reduced.
+File "/Users/sakurai/.opam/4.02.1/lib/menhir/standard.mly", line 29, characters 4-4:
+Warning: production option(patterns_comma) -> is never reduced.
+File "parser.mly", line 231, characters 22-36:
+Warning: production pattern3 -> simplePattern is never reduced.
+File "parser.mly", line 241, characters 22-80:
+Warning: production simplePattern -> stableId LBRACE option(patterns_comma) option(valid_at) UBAR MUL RBRACE is never reduced.
+Warning: in total, 4 productions are never reduced.
+make: *** [all] Error 1
