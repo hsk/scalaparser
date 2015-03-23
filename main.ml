@@ -112,6 +112,8 @@ let () =
   test_string Parser.main "for{x <- xs}yield println(x)";
   test_string Parser.main "new { def a() = 1 }";
   test_string Parser.main "new A";
+  test_string Parser.main "new A(1)";
+  test_string Parser.main "new A(1,2)";
 
   test_string Parser.main2 "class A(a:Int)";
   test_string Parser.main2 "class A(a:Int,b:Int)";
@@ -147,6 +149,11 @@ let () =
   test_string Parser.main2 "object Obj { def a(x:Int,y:Int)=1 }";
   test_string Parser.main2 "object Obj { def a(x:Int,y:Int):Int=1 }";
   test_string Parser.main2 "object Obj { protected def a(x:Int,y:Int):Int=1 }";
+  test_string Parser.main2 "object Obj extends A";
+  test_string Parser.main2 "object Obj extends A(1)";
+  test_string Parser.main2 "trait Tra { val i:Int }";
+  test_string Parser.main2 "trait Tra extends A";
+  test_string Parser.main2 "trait Tra extends A";
 (*  test_string Parser.main "return";  return *)
 
   Printf.printf "ok\n";

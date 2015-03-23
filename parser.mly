@@ -420,24 +420,24 @@ funDef            : | funSig colon_type? EQ expr { "" }/*
 typeDef           : | id typeParamClause? EQ type1 { "" }
 
 tmplDef           : | CASE? CLASS classDef { "" }
-                    | CASE? OBJECT objectDef { "" }/*
-                    | TRAIT traitDef { "" }*/
+                    | CASE? OBJECT objectDef { "" }
+                    | TRAIT traitDef { "" }
 classDef          : | id classParamClauses { "" }
                     /*
                     | id typeParamClause? constrAnnotation* accessModifier?
-                       classParamClauses classTemplateOpt? { "" }*//*
-traitDef          : | id typeParamClause? traitTemplateOpt? { "" }*/
+                       classParamClauses classTemplateOpt? { "" }*/
+traitDef          : | id typeParamClause? traitTemplateOpt? { "" }
 objectDef         : | id classTemplateOpt { "" }
-classTemplateOpt  : /*| EXTENDS classTemplate { "" }*/
-                    | EXTENDS? templateBody { "" }/*
+classTemplateOpt  : | EXTENDS classTemplate { "" }
+                    | EXTENDS? templateBody { "" }
 traitTemplateOpt  : | EXTENDS traitTemplate { "" }
-                    | EXTENDS? templateBody { "" }*/
+                    | EXTENDS? templateBody { "" }
 classTemplate     : | classParents { "" }
-                    /*| earlyDefs? classParents templateBody? { "" }*//*
-traitTemplate     : | earlyDefs? traitParents templateBody? { "" }*/
-classParents      : | constr /*with_annotType* */ { "" }/*
-traitParents      : | annotType with_annotType* { "" }*/
-constr            : | annotType /* argumentExprs* */ { "" }
+                    /*| earlyDefs? classParents templateBody? { "" }*/
+traitTemplate     : | /* earlyDefs? */ traitParents /* templateBody? */ { "" }
+classParents      : | constr /*with_annotType* */ { "" }
+traitParents      : | annotType with_annotType* { "" }
+constr            : | annotType argumentExprs* { "" }
 /*
 earlyDefs         : | LBRACE earlyDef_semi_erlyDefs? RBRACE WITH { "" }
 earlyDef_semi_erlyDefs
