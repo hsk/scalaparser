@@ -110,6 +110,8 @@ let () =
   test_string Parser.main "for{x <- xs}println(x)";
   test_string Parser.main "for(i <- is)yield println(i)";
   test_string Parser.main "for{x <- xs}yield println(x)";
+  test_string Parser.main "new { def a() = 1 }";
+  test_string Parser.main "new A";
 
   test_string Parser.main2 "class A(a:Int)";
   test_string Parser.main2 "class A(a:Int,b:Int)";

@@ -217,8 +217,8 @@ prefixExpr        : | SUB simpleExpr { "" }
                     | TILDA simpleExpr { "" }
                     | NOT simpleExpr { "" }
                     | simpleExpr { $1 }
-simpleExpr        : /*| NEW classTemplate { "" }
-                    | NEW templateBody { "" }*/
+simpleExpr        : | NEW classTemplate { "" }
+                    | NEW templateBody { "" }
                     | blockExpr { $1 }
                     | simpleExpr1 { $1 }                    
                     | simpleExpr1 UBAR { $1 ^ "_" }
@@ -401,15 +401,15 @@ funDcl            : | funSig colon_type? { "" }*/
 funSig            : | id funTypeParamClause? paramClauses { "" }
 
 typeDcl           : | id typeParamClause? lcolon_type? rcolon_type? { "" }
-/*
-patVarDef         : | VAL patDef { "" }
+
+patVarDef         : | VAL patDef { "" }/*
                     | VAR varDef { "" }*/
 def               : /*| patVarDef { "" }*/
                     | DEF funDef { "" }
                     /*| TYPE NL* typeDef { "" }
-                    | tmplDef { "" }
+                    | tmplDef { "" }*/
 patDef            : | pattern2 comma_pattern2* colon_type? EQ expr { "" }
-comma_pattern2    : | COMMA pattern2 { "" }
+comma_pattern2    : | COMMA pattern2 { "" }/*
 varDef            : | patDef { "" }
                     | ids COLON type1 EQ UBAR { "" }*/
 funDef            : | funSig colon_type? EQ expr { "" }/*
@@ -431,18 +431,20 @@ objectDef         : | id classTemplateOpt { "" }
 classTemplateOpt  : /*| EXTENDS classTemplate { "" }*/
                     | EXTENDS? templateBody { "" }/*
 traitTemplateOpt  : | EXTENDS traitTemplate { "" }
-                    | EXTENDS? templateBody { "" }
-classTemplate     : | earlyDefs? classParents templateBody? { "" }
-traitTemplate     : | earlyDefs? traitParents templateBody? { "" }
-classParents      : | constr with_annotType* { "" }
-traitParents      : | annotType with_annotType* { "" }
-constr            : | annotType argumentExprs* { "" }
+                    | EXTENDS? templateBody { "" }*/
+classTemplate     : | classParents { "" }
+                    /*| earlyDefs? classParents templateBody? { "" }*//*
+traitTemplate     : | earlyDefs? traitParents templateBody? { "" }*/
+classParents      : | constr /*with_annotType* */ { "" }/*
+traitParents      : | annotType with_annotType* { "" }*/
+constr            : | annotType /* argumentExprs* */ { "" }
+/*
 earlyDefs         : | LBRACE earlyDef_semi_erlyDefs? RBRACE WITH { "" }
 earlyDef_semi_erlyDefs
                   : | earlyDef semi_earlyDef* { "" }
 semi_earlyDef     : | semi earlyDef { "" }
-earlyDef          : | annotation_nl* modifier* patVarDef { "" }
-
+earlyDef          : | annotation_nl* modifier* patVarDef { "" }*/
+/*
 constrExpr        : | selfInvocation { "" }
                     | constrBlock { "" }
 constrBlock       : | LBRACE selfInvocation semi_blockStat* RBRACE { "" }
