@@ -301,12 +301,10 @@ comma_patterns    : | COMMA patterns { "" }
 typeParamClause   : | LBRACK variantTypeParam comma_variantTypeParam* RBRACK { "" }
 comma_variantTypeParam
                   : | COMMA variantTypeParam { "" }
-/*
+
 funTypeParamClause: | LBRACK typeParam comma_typeParam* RBRACK { "" }
-*/
-/*
+
 comma_typeParam   : | COMMA typeParam { "" }
-*/
 variantTypeParam  : | annotation* add_or_sub? typeParam { "" }
 
 add_or_sub        : | ADD { "+" }
@@ -321,15 +319,14 @@ lcolon_type       : | LCOLON type1 { "" }
 lmod_type         : | LMOD type1 { "" }
 colon_type        : | COLON type1 { "" }
 
-/*
-paramClauses      : | paramClause* { "" }
-                    | paramClause* NL? LPAREN IMPLICIT params RPAREN { "" }
+
+paramClauses      : | paramClause* { "" }/*
+                    | paramClause* NL? LPAREN IMPLICIT params RPAREN { "" }*/
 paramClause       : | NL? LPAREN params? RPAREN { "" }
 params            : | param comma_param* { "" }
 comma_param       : | COMMA param { "" }
 param             : | annotation* id coron_paramType? eq_expr? { "" }
 coron_paramType   : | COLON paramType { "" }
-*/
 eq_expr           : | EQ expr { "" }
 paramType         : | type1 { "" }
                     | ARROW type1 { "" }
@@ -362,21 +359,21 @@ accessQualifier   : | LBRACK id RBRACK { "" }
                     | LBRACK THIS RBRACK { "" }
 
 annotation        : | AT simpleType argumentExprs* { "" }
-/*constrAnnotation  : | AT simpleType argumentExprs { "" }
+/*constrAnnotation  : | AT simpleType argumentExprs { "" }*/
 
-templateBody      : | NL? LBRACE selfType? templateStat semi_templateStat* RBRACE { "" }
-semi_templateStat : | semi templateStat { "" }
+templateBody      : | LBRACE templateStat RBRACE { "" }
+                    /*| NL? LBRACE selfType? templateStat semi_templateStat* RBRACE { "" }*/
+/*
+semi_templateStat : | semi templateStat { "" }*/
 templateStat      : | import { "" }
                     | annotation_nl* modifier* def { "" }
                     | annotation_nl* modifier* dcl { "" }
                     | expr { "" }
                     | { "" }
-                    */
 annotation_nl     : | annotation NL? { "" }
 /*
 selfType          : | id colon_type? ARROW { "" }
-                    | THIS COLON type1 ARROW { "" }
-*/
+                    | THIS COLON type1 ARROW { "" }*/
 import            : | IMPORT importExpr comma_importExpr* { "" }
 
 comma_importExpr  : | COMMA importExpr { "" }
@@ -400,22 +397,22 @@ dcl               : | VAL valDcl { "" }
 valDcl            : | ids COLON type1 { "" }
 varDcl            : | ids COLON type1 { "" }
 /*
-funDcl            : | funSig colon_type? { "" }
+funDcl            : | funSig colon_type? { "" }*/
 funSig            : | id funTypeParamClause? paramClauses { "" }
-*/
+
 typeDcl           : | id typeParamClause? lcolon_type? rcolon_type? { "" }
 /*
 patVarDef         : | VAL patDef { "" }
-                    | VAR varDef { "" }
-def               : | patVarDef { "" }
+                    | VAR varDef { "" }*/
+def               : /*| patVarDef { "" }*/
                     | DEF funDef { "" }
-                    | TYPE NL* typeDef { "" }
+                    /*| TYPE NL* typeDef { "" }
                     | tmplDef { "" }
 patDef            : | pattern2 comma_pattern2* colon_type? EQ expr { "" }
 comma_pattern2    : | COMMA pattern2 { "" }
 varDef            : | patDef { "" }
-                    | ids COLON type1 EQ UBAR { "" }
-funDef            : | funSig colon_type? EQ expr { "" }
+                    | ids COLON type1 EQ UBAR { "" }*/
+funDef            : | funSig colon_type? EQ expr { "" }/*
                     | funSig NL? LBRACE block RBRACE { "" }
                     | THIS paramClause paramClauses EQ constrExpr { "" }
                     | THIS paramClause paramClauses NL? constrBlock { "" }
@@ -423,16 +420,16 @@ funDef            : | funSig colon_type? EQ expr { "" }
 typeDef           : | id typeParamClause? EQ type1 { "" }
 
 tmplDef           : | CASE? CLASS classDef { "" }
-/*                    | CASE? OBJECT objectDef { "" }
+                    | CASE? OBJECT objectDef { "" }/*
                     | TRAIT traitDef { "" }*/
 classDef          : | id classParamClauses { "" }
                     /*
                     | id typeParamClause? constrAnnotation* accessModifier?
                        classParamClauses classTemplateOpt? { "" }*//*
-traitDef          : | id typeParamClause? traitTemplateOpt? { "" }
+traitDef          : | id typeParamClause? traitTemplateOpt? { "" }*/
 objectDef         : | id classTemplateOpt { "" }
-classTemplateOpt  : | EXTENDS classTemplate { "" }
-                    | EXTENDS? templateBody { "" }
+classTemplateOpt  : /*| EXTENDS classTemplate { "" }*/
+                    | EXTENDS? templateBody { "" }/*
 traitTemplateOpt  : | EXTENDS traitTemplate { "" }
                     | EXTENDS? templateBody { "" }
 classTemplate     : | earlyDefs? classParents templateBody? { "" }

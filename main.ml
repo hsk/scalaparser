@@ -131,6 +131,20 @@ let () =
   test_string Parser.main2 "import A.{a,_}";
   test_string Parser.main2 "import A.{a,b,_}";
   test_string Parser.main2 "import A.{a=>c,b=>d1,_}";
+  test_string Parser.main2 "object Obj {}";
+  test_string Parser.main2 "object Obj {\n\n}";
+  test_string Parser.main2 "object Obj\n\n{\n\n}";
+  test_string Parser.main2 "object Obj { import A.a\n}";
+  test_string Parser.main2 "object Obj { exp }";
+  test_string Parser.main2 "object Obj { if(a) b }";
+  test_string Parser.main2 "object Obj { val i:Int }";
+  test_string Parser.main2 "object Obj { var i:Int }";
+  test_string Parser.main2 "object Obj { var i,j:Int }";
+  test_string Parser.main2 "object Obj { def a()=1 }";
+  test_string Parser.main2 "object Obj { def a(x:Int)=1 }";
+  test_string Parser.main2 "object Obj { def a(x:Int,y:Int)=1 }";
+  test_string Parser.main2 "object Obj { def a(x:Int,y:Int):Int=1 }";
+  test_string Parser.main2 "object Obj { protected def a(x:Int,y:Int):Int=1 }";
 (*  test_string Parser.main "return";  return *)
 
   Printf.printf "ok\n";
