@@ -92,6 +92,25 @@ let () =
   test_string Parser.main "a:Int.type";
   test_string Parser.main "a:Int#aa";
   test_string Parser.main "a match {case x => x}";
+  test_string Parser.main "a match {case x|y => y}";
+  test_string Parser.main "a match {case _ => a}";
+  test_string Parser.main "a match {case k @ _ => 1}";
+  test_string Parser.main "a match {case k @ v => 1}";
+  test_string Parser.main "a match {case k @ 1 => 1}";
+  test_string Parser.main "a match {case k @ KK => 1}";
+  test_string Parser.main "a match {case k @ K(x) => x}";
+  test_string Parser.main "a match {case k @ K() => 1}";
+  test_string Parser.main "a match {case k @ K(x,y) => x}";
+  test_string Parser.main "a match {case k @ K(a,_) => a}";
+  test_string Parser.main "a match {case k @ (b,_) => b}";
+  test_string Parser.main "a match {case k @ (_,c,_) => b}";
+  test_string Parser.main "{case cc => cc}";
+  test_string Parser.main "try { t1 } catch {case te => te}";
+  test_string Parser.main "for(i <- is)println(i)";
+  test_string Parser.main "for{x <- xs}println(x)";
+  test_string Parser.main "for(i <- is)yield println(i)";
+  test_string Parser.main "for{x <- xs}yield println(x)";
+
 (*  test_string Parser.main "return";  return *)
 
   Printf.printf "ok\n";

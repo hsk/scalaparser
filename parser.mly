@@ -183,11 +183,11 @@ expr1             : | IF LPAREN expr RPAREN nl? expr { "" }
                     | IF LPAREN expr RPAREN nl? expr ELSE expr { "" }
                     | IF LPAREN expr RPAREN nl? expr semi ELSE expr { "" }
 
-                    | WHILE LPAREN expr RPAREN NL* expr { "" }/*
-                    | TRY lbrace_block_rbrace_or_expr catch_lbrace_case_clauses_rbrace? finally_expr? { "" }*/
-                    | DO expr semi? WHILE LPAREN expr RPAREN { "" }/*
+                    | WHILE LPAREN expr RPAREN NL* expr { "" }
+                    | TRY lbrace_block_rbrace_or_expr catch_lbrace_case_clauses_rbrace? finally_expr? { "" }
+                    | DO expr semi? WHILE LPAREN expr RPAREN { "" }
                     | FOR LPAREN enumerators RPAREN NL* YIELD? expr { "" }
-                    | FOR LBRACE enumerators RBRACE NL* YIELD? expr { "" }*/
+                    | FOR LBRACE enumerators RBRACE NL* YIELD? expr { "" }
                     | THROW expr { "" }
                     | RETURN { Printf.printf "return"; "" }
                     | RETURN expr { "" }
@@ -199,13 +199,12 @@ expr1             : | IF LPAREN expr RPAREN nl? expr { "" }
                     | postfixExpr ascription { "" }
                     | postfixExpr MATCH LBRACE caseClauses RBRACE { "" }
                     
-/*
 lbrace_block_rbrace_or_expr
                   : | LBRACE block RBRACE { "" }
                     | expr { "" }
 catch_lbrace_case_clauses_rbrace :
                     | CATCH LBRACE caseClauses RBRACE { "" }
-finally_expr      : | FINALLY expr { "" }*/
+finally_expr      : | FINALLY expr { "" }
 postfixExpr       : | infixExpr /*id_nl?*/ { Printf.printf "postfixExpr %s" $1; $1 }
                     | infixExpr id_nl { let s = "(" ^ $1 ^ " " ^ $2  ^ ")" in Printf.printf "postfixExpr %s" s; s }
 infixExpr         : | prefixExpr { $1 }
@@ -243,7 +242,7 @@ argumentExprs     : | LPAREN exprs? RPAREN { "" }
                     | NL? blockExpr { "" }
 exprs_comma       : | exprs COMMA { "" }
 */
-blockExpr         : /*| LBRACE caseClauses RBRACE { "" }*/
+blockExpr         : | LBRACE caseClauses RBRACE { "" }
                     | LBRACE block RBRACE { "" }
 block             : | blockStat? semi_blockStat* { "" }
                     /*| blockStat? semi_blockStat* resultExpr { "" }*/
@@ -258,43 +257,44 @@ blockStat         : /*| import { "" }
 resultExpr        : | bindings ARROW block { "" }
                     | IMPLICIT? id COLON compoundType ARROW block { "" }
                     | UBAR COLON compoundType ARROW block { "" }*/
-/*
+
 enumerators       : | generator semi_generator* { "" }
 semi_generator    : | semi generator { "" }
 generator         : | pattern1 GARROW expr generator_v* { "" }
-     generator_v  : | semi? guard { "" }
-                    | semi pattern1 EQ expr { "" }*/
+generator_v       : /*| semi? guard { "" }*/
+                    | semi pattern1 EQ expr { "" }
 caseClauses       : | caseClause+ { "" }
 caseClause        : | CASE pattern ARROW block { "" }
                     /*| CASE pattern guard ARROW block { "" }
 guard             : | IF postfixExpr { "" }*/
 
 pattern           : | pattern1 { "" }
-                    /*| pattern1 or_pattern1* { "" }*/
+                    | pattern1 or_pattern1+ { "" }
 or_pattern1       : | OR pattern1 { "" }
 pattern1          : /*| VALID COLON typePat { "" }
                     | UBAR COLON typePat { "" }*/
                     | pattern2 { "" }
 pattern2          : | VALID { "" }
-                    /*| valid_at? pattern3 { "" }
+                    | valid_at? pattern3 { "" }
 valid_at          : | VALID AT { "" }
 pattern3          : | simplePattern { "" }
-                    | simplePattern id_nl_simplePattern* { "" }
+                    /*| simplePattern id_nl_simplePattern* { "" }*/
 id_nl_simplePattern
                   : | id_nl simplePattern { "" }
 simplePattern     : | UBAR { "" }
                     | VALID { "" }
                     | literal { "" }
                     | stableId { "" }
-                    | stableId LPAREN patterns? RPAREN { "" }
-                    | stableId LPAREN patterns_comma? valid_at? UBAR MUL RPAREN { "" }
-                    | LPAREN patterns? RPAREN { "" }
+                    | stableId LPAREN patterns? RPAREN { "" }/*
+                    | stableId LPAREN patterns_comma? valid_at? UBAR MUL RPAREN { "" }*/
+                    | LPAREN patterns? RPAREN { "" }/*
                     | xmlPattern { "" }
+                    */
 patterns_comma    : | patterns COMMA { "" }
 patterns          : | pattern comma_patterns? { "" }
-                    | UBAR MUL { "" }
+/*                    | UBAR MUL { "" }*/
 comma_patterns    : | COMMA patterns { "" }
-*/
+
 typeParamClause   : | LBRACK variantTypeParam comma_variantTypeParam* RBRACK { "" }
 comma_variantTypeParam
                   : | COMMA variantTypeParam { "" }
