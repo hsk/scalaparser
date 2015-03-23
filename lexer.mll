@@ -81,7 +81,7 @@ rule token = parse
 | "object" { OBJECT }
 | "override" { OVERRIDE }
 
-| "package" { PACKAGE }
+| "package" { Printf.printf "package\n"; PACKAGE }
 | "private" { PRIVATE }
 | "protected" { PROTECTED }
 

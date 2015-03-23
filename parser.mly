@@ -121,7 +121,7 @@ literal           : | SUB? IntegerLiteral { Printf.printf "%s%Ld\n" (match $1 wi
                     | SymbolLiteral { $1 }
                     | NULL { "" }
                     
-qualId            : | id dot_qualId* { "" }
+qualId            : | id dot_qualId* { Printf.printf "qualId %s\n" $1; "" }
 dot_qualId        : | DOT qualId { "" }
 ids               : | id comma_id* { "" }
 comma_id          : | COMMA id  { "" }
@@ -242,7 +242,9 @@ comma_expr        : | COMMA expr { "" }
 argumentExprs     : | LPAREN exprs? RPAREN { "" }
 /*
                     | LPAREN exprs_comma? postfixExpr COLON UBAR MUL RPAREN { "" }
-                    | NL? blockExpr { "" }
+                    | NL? blockExpr { "" }*/
+/*                    | { "" }*/
+/*
 exprs_comma       : | exprs COMMA { "" }
 */
 blockExpr         : | LBRACE caseClauses RBRACE { "" }
@@ -264,12 +266,12 @@ resultExpr        : | bindings ARROW block { "" }
 enumerators       : | generator semi_generator* { "" }
 semi_generator    : | semi generator { "" }
 generator         : | pattern1 GARROW expr generator_v* { "" }
-generator_v       : /*| semi? guard { "" }*/
+generator_v       : | semi? guard { "" }
                     | semi pattern1 EQ expr { "" }
 caseClauses       : | caseClause+ { "" }
 caseClause        : | CASE pattern ARROW block { "" }
-                    /*| CASE pattern guard ARROW block { "" }
-guard             : | IF postfixExpr { "" }*/
+                    /*| CASE pattern guard ARROW block { "" }*/
+guard             : | IF postfixExpr { "" }
 
 pattern           : | pattern1 { "" }
                     | pattern1 or_pattern1+ { "" }
@@ -392,31 +394,30 @@ importSelector    : | id { "" }
                     | id ARROW id_or_ubar { "" }
 dcl               : | VAL valDcl { "" }
                     | VAR varDcl { "" }
-/*                    | DEF funDcl { "" }
-                    | TYPE NL* typeDcl { "" }*/
+                    | DEF funDcl { "" }
+                    | TYPE NL* typeDcl { "" }
 valDcl            : | ids COLON type1 { "" }
 varDcl            : | ids COLON type1 { "" }
-/*
-funDcl            : | funSig colon_type? { "" }*/
+
+funDcl            : | funSig colon_type? { "" }
 funSig            : | id funTypeParamClause? paramClauses { "" }
 
 typeDcl           : | id typeParamClause? lcolon_type? rcolon_type? { "" }
 
-patVarDef         : | VAL patDef { "" }/*
-                    | VAR varDef { "" }*/
+patVarDef         : | VAL patDef { "" }
+                    | VAR varDef { "" }
 def               : /*| patVarDef { "" }*/
                     | DEF funDef { "" }
                     /*| TYPE NL* typeDef { "" }
                     | tmplDef { "" }*/
 patDef            : | pattern2 comma_pattern2* colon_type? EQ expr { "" }
-comma_pattern2    : | COMMA pattern2 { "" }/*
-varDef            : | patDef { "" }
+comma_pattern2    : | COMMA pattern2 { "" }
+varDef            : | patDef { "" }/*
                     | ids COLON type1 EQ UBAR { "" }*/
-funDef            : | funSig colon_type? EQ expr { "" }/*
+funDef            : | funSig colon_type? EQ expr { "" }
                     | funSig NL? LBRACE block RBRACE { "" }
                     | THIS paramClause paramClauses EQ constrExpr { "" }
                     | THIS paramClause paramClauses NL? constrBlock { "" }
-*/
 typeDef           : | id typeParamClause? EQ type1 { "" }
 
 tmplDef           : | CASE? CLASS classDef { "" }
@@ -444,26 +445,26 @@ earlyDef_semi_erlyDefs
                   : | earlyDef semi_earlyDef* { "" }
 semi_earlyDef     : | semi earlyDef { "" }
 earlyDef          : | annotation_nl* modifier* patVarDef { "" }*/
-/*
+
 constrExpr        : | selfInvocation { "" }
+
                     | constrBlock { "" }
 constrBlock       : | LBRACE selfInvocation semi_blockStat* RBRACE { "" }
-selfInvocation    : | THIS argumentExprs argumentExprs* { "" }
-*/
+selfInvocation    : | THIS argumentExprs* { "" }
+
 topStatSeq        : | topStat semi_topStat* { "" }
 semi_topStat      : | semi topStat { "" }
 topStat           : | annotation_nl* modifier* tmplDef { "" }
-                    | import { "" }/*
+                    | import { "" }
                     | packaging { "" }
                     | packageObject { "" }
                     | { "" }
 packaging         : | PACKAGE qualId NL? LBRACE topStatSeq RBRACE { "" }
 packageObject     : | PACKAGE OBJECT objectDef { "" }
-*/
-compilationUnit   : | package_qualId_semi* topStatSeq { "" }
-package_qualId_semi
-                  : | PACKAGE qualId semi { "" }
 
+compilationUnit   : | PACKAGE qualId semi compilationUnit { "" }
+                    | topStatSeq { "" }
+                    
 
 xmlExpr           : | XML { "" }
 xmlPattern        : | XMLPATTERN { "" }

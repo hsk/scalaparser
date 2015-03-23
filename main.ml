@@ -108,6 +108,7 @@ let () =
   test_string Parser.main "try { t1 } catch {case te => te}";
   test_string Parser.main "for(i <- is)println(i)";
   test_string Parser.main "for{x <- xs}println(x)";
+  test_string Parser.main "for{x <- xs if x >= 1}println(x)";
   test_string Parser.main "for(i <- is)yield println(i)";
   test_string Parser.main "for{x <- xs}yield println(x)";
   test_string Parser.main "new { def a() = 1 }";
@@ -144,7 +145,11 @@ let () =
   test_string Parser.main2 "object Obj { val i:Int }";
   test_string Parser.main2 "object Obj { var i:Int }";
   test_string Parser.main2 "object Obj { var i,j:Int }";
+  test_string Parser.main2 "object Obj { def a():Int }";
+  test_string Parser.main2 "object Obj { type A }";
   test_string Parser.main2 "object Obj { def a()=1 }";
+  test_string Parser.main2 "object Obj { def a(){} }";
+  test_string Parser.main2 "object Obj { def a(x:Int){} }";
   test_string Parser.main2 "object Obj { def a(x:Int)=1 }";
   test_string Parser.main2 "object Obj { def a(x:Int,y:Int)=1 }";
   test_string Parser.main2 "object Obj { def a(x:Int,y:Int):Int=1 }";
@@ -152,8 +157,18 @@ let () =
   test_string Parser.main2 "object Obj extends A";
   test_string Parser.main2 "object Obj extends A(1)";
   test_string Parser.main2 "trait Tra { val i:Int }";
-  test_string Parser.main2 "trait Tra extends A";
-  test_string Parser.main2 "trait Tra extends A";
+  test_string Parser.main2 "trait Tra { def a():Int }";
+  test_string Parser.main2 "trait Tra extends TraParent";
+  test_string Parser.main2 "package Abc; object Obj {  }";
+  test_string Parser.main2 "package Abc {  } ";
+  test_string Parser.main2 "package Abc {  }; object K {} ";
+  test_string Parser.main2 "package Abc {  }; package AAA {} ";
+  test_string Parser.main2 "package Abc; package B; package AAA {} ";
+
+  test_string Parser.main2 "object Obj { def this(a:Int)=this }";
+  test_string Parser.main2 "object Obj { def this(a:Int)={this()} }";
+  test_string Parser.main2 "object Obj { def this(a:Int){this()} }";
+  (* test_string Parser.main2 "package Abc; package B; package AAA {} ; package C"; error *)
 (*  test_string Parser.main "return";  return *)
 
   Printf.printf "ok\n";

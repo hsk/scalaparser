@@ -4422,7 +4422,7 @@ let
 
   | 38 ->
 # 84 "lexer.mll"
-            ( PACKAGE )
+            ( Printf.printf "package\n"; PACKAGE )
 # 4427 "lexer.ml"
 
   | 39 ->
