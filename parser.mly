@@ -146,7 +146,7 @@ simpleType        : | simpleType typeArgs { "" }
                     | simpleType SHARP id { "" }
                     | stableId { "" }
                     /*| path DOT TYPE { "" }*/
-                    | LBRACE types RBRACE { "" }
+                    | LPAREN types RPAREN { "" }
 typeArgs          : | LBRACK types RBRACK { "" }
 types             : | type1 comma_type* { "" }
 comma_type        : | COMMA type1 { "" }
@@ -221,7 +221,7 @@ exprs             : | expr comma_expr* { "" }
 comma_expr        : | COMMA expr { "" }
 argumentExprs     : | LPAREN exprs? RPAREN { "" }
 /*
-                    | LBRACE exprs_comma? postfixExpr COLON UBAR MUL RBRACE { "" }
+                    | LPAREN exprs_comma? postfixExpr COLON UBAR MUL RPAREN { "" }
                     | NL? blockExpr { "" }
 exprs_comma       : | exprs COMMA { "" }
 blockExpr         : | LBRACE caseClauses RBRACE { "" }
@@ -264,10 +264,9 @@ simplePattern     : | UBAR { "" }
                     | VALID { "" }
                     | literal { "" }
                     | stableId { "" }
-                    | stableId LBRACE patterns? RBRACE { "" }
-                    | stableId LBRACE patterns_comma? valid_at? UBAR MUL RBRACE { "" }
-                    | stableId LBRACE patterns_comma? valid_at? UBAR MUL RBRACE { "" }
-                    | LBRACE patterns? RBRACE { "" }
+                    | stableId LPAREN patterns? RPAREN { "" }
+                    | stableId LPAREN patterns_comma? valid_at? UBAR MUL RPAREN { "" }
+                    | LPAREN patterns? RPAREN { "" }
                     | xmlPattern { "" }
 patterns_comma    : | patterns COMMA { "" }
 patterns          : | pattern comma_patterns? { "" }
@@ -299,8 +298,8 @@ colon_type        : | COLON type1 { "" }
 
 /*
 paramClauses      : | paramClause* { "" }
-                    | paramClause* NL? LBRACE IMPLICIT params RBRACE { "" }
-paramClause       : | NL? LBRACE params? RBRACE { "" }
+                    | paramClause* NL? LPAREN IMPLICIT params RPAREN { "" }
+paramClause       : | NL? LPAREN params? RPAREN { "" }
 params            : | param comma_param* { "" }
 comma_param       : | COMMA param { "" }
 param             : | annotation* id coron_paramType? eq_expr? { "" }
@@ -312,15 +311,15 @@ paramType         : | type1 { "" }
                     | type1 MUL { "" }
 /*
 classParamClauses : | classParamClause* { "" }
-                    | classParamClause* NL? LBRACE IMPLICIT classParams RBRACE { "" }
-classParamClause  : | NL? LBRACE classParams? RBRACE { "" }
+                    | classParamClause* NL? LPAREN IMPLICIT classParams RPAREN { "" }
+classParamClause  : | NL? LPAREN classParams? RPAREN { "" }
 classParams       : | classParam comma_classParam* { "" }
 comma_classParam  : | COMMA classParam { "" }
 classParam        : | annotation* modifier* val_or_var?
                        id COLON paramType eq_expr? { "" }
 val_or_var        : | VAL { "" }
                     | VAR { "" }
-bindings          : | LBRACE binding comma_binding* RBRACE { "" }
+bindings          : | LPAREN binding comma_binding* RPAREN { "" }
 comma_binding     : | COMMA binding { "" }
 binding           : | id colon_type? { "" }
                     | UBAR colon_type? { "" }
