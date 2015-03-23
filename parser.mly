@@ -79,38 +79,20 @@
 %token QQUOTE /* "`" */
 %token EOF
 
+%nonassoc RPAREN
+%nonassoc ELSE
+
 /*
 %rright*/
 
 %type <string> main
 %start main
 
-%type <string> literal
-%start literal
-
-%type <string> type1
-%start type1
-
-%type <string> ascription
-%start ascription
-
-%type <string> qualId
-%start qualId
-
-%type <string> typePat
-%start typePat
-
-%type <string> expr
-%start expr
-
-%type <string> simpleExpr1
-%start simpleExpr1
-
 %%
 
 
-main              : | literal { $1 }
-
+main              : | expr EOF { $1 }
+nl                : | NL { "" }
 semi              : | SEMI { "" }
                     | NL+  { "" }
 plainid           : | PLAINID { $1 }
@@ -185,8 +167,9 @@ expr              : /*| bindings ARROW expr { "" }*/
                     | id ARROW expr { "" }
                     | UBAR ARROW expr { "" }
                     | expr1 { "" }
-expr1             : /*| IF LPAREN expr RPAREN NL* expr { "" }*/
-                    | IF LPAREN expr RPAREN NL* expr semi? ELSE expr { "" }
+expr1             : | IF LPAREN expr RPAREN nl? expr { "" }
+                    | IF LPAREN expr RPAREN nl? expr ELSE expr { "" }
+                    | IF LPAREN expr RPAREN nl? expr semi ELSE expr { "" }
 
                     | WHILE LPAREN expr RPAREN NL* expr { "" }/*
                     | TRY lbrace_block_rbrace_or_expr catch_lbrace_case_clauses_rbrace? finally_expr? { "" }*/

@@ -81,19 +81,5 @@ type token =
 exception Error
 
 (* The monolithic API. *)
-val typePat: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (string)
-
-val type1: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (string)
-
-val simpleExpr1: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (string)
-
-val qualId: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (string)
-
 val main: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (string)
-
-val literal: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (string)
-
-val expr: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (string)
-
-val ascription: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (string)
 
