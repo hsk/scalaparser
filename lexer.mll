@@ -21,7 +21,7 @@ let printableChar = ['\x20' - '\x7F']
 let printableCharNoDoubleQuote = ['\x20' - '\x21' '\x23' - '\x7F']
 let charEscapeSeq = '\\' ['b' 't' 'n' 'f' 'r' '"' '\'' '\\']
 let op = opchar+
-let idrest = letter | digit ('_' | op)
+let idrest = (letter | digit)* ('_' op)?
 
 let nonZeroDigit =  ['1' - '9']
 let decimalNumeral = '0' | nonZeroDigit digit*
@@ -34,8 +34,8 @@ let floatType    = ['F' 'f' 'D' 'd']
 
 let stringElement = printableCharNoDoubleQuote | charEscapeSeq
 let multiLineChars = ('"'? '"'? [^ '"'])* '"'*
-let plainid = upper idrest*
-let valid = lower idrest*
+let plainid = upper idrest
+let valid = lower idrest
 
 rule token = parse
 | whiteSpace+ { token lexbuf }

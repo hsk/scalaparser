@@ -72,7 +72,25 @@ let () =
   test_string Parser.main "ubar _";
   test_string Parser.main "a add c add d";
   test_string Parser.main "a add";
-
+  test_string Parser.main "a : _ *";
+  test_string Parser.main "{}";
+  test_string Parser.main "{block1}";
+  test_string Parser.main "{\nblock2}";
+  test_string Parser.main "{\nblock3\n}";
+  test_string Parser.main "{\n}";
+  test_string Parser.main "{\n\nblock4\n\n}";
+  test_string Parser.main "ok";
+  test_string Parser.main "(a,b)=>1";
+  test_string Parser.main "(a:Int,b:Int)=>1";
+  test_string Parser.main "(a:Int)=>1";
+  test_string Parser.main "(a:Int)";
+  test_string Parser.main "a:Int";
+  test_string Parser.main "a:Int=>Int";
+  test_string Parser.main "(a:Int=>Int)=>1";
+  test_string Parser.main "A[Int]()";
+  test_string Parser.main "List[String](1,2,3)";
+  test_string Parser.main "a:Int.type";
+  test_string Parser.main "a:Int#aa";
 (*  test_string Parser.main "return";  return *)
 
   Printf.printf "ok\n";

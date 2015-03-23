@@ -1,4 +1,14 @@
 %{
+
+type e =
+  | EId of string
+  | EBin of e * string * e
+  | EString of string
+  | EBool of bool
+  | EInt of int64
+  | EFloat of float
+  | EPost of e * string
+
 %}
 
 %token <string>VALID /* "valid" */
@@ -84,7 +94,7 @@
 /*
 %rright*/
 
-%type <string> main
+%type <E> main
 %start main
 
 %%
@@ -120,7 +130,8 @@ stableId          : | id { Printf.printf "stableId '%s'\n" $1; $1 }
 classQualifier    : | LBRACK id RBRACK { "" }
 
 type1             : | functionArgTypes ARROW type1 { "" }
-                    | infixType existentialClause? { "" }
+                    | infixType { "" }
+                    /*| infixType existentialClause { "" }*/
 
 functionArgTypes  : | infixType { "" }
                     | LPAREN paramtypes RPAREN { "" }
@@ -134,19 +145,22 @@ semi_existentialDcl
 existentialDcl    : | TYPE typeDcl { "" }
                     | VAL valDcl { "" }
 
-infixType         : | compoundType id_nl_compoundType* { "" }
+infixType         : | compoundType { "" }
+                    /*| compoundType id_nl_compoundType+ { "" }*/
 id_nl_compoundType
                   : | id_nl compoundType { "" }
 id_nl             : | id NL? { $1 }
-compoundType      : | annotType with_annotType* refinement? { "" }
+compoundType      : | annotType  { "" }
+                    /*| annotType with_annotType* refinement? { "" }*/
 with_annotType    : | WITH annotType { "" }
                     | refinement { "" }
-annotType         : | simpleType annotation* { "" }
-simpleType        : | simpleType typeArgs { "" }
+annotType         : | simpleType { "" }
+                    /*| simpleType annotation* { "" }*/
+simpleType        : /*| simpleType typeArgs { "" }*/
                     | simpleType SHARP id { "" }
                     | stableId { "" }
-                    /*| path DOT TYPE { "" }*/
-                    | LPAREN types RPAREN { "" }
+                    | path DOT TYPE { "" }
+                    /*| LPAREN types RPAREN { "" }*/
 typeArgs          : | LBRACK types RBRACK { "" }
 types             : | type1 comma_type* { "" }
 comma_type        : | COMMA type1 { "" }
@@ -157,12 +171,11 @@ refineStat        : | dcl { "" }
                     | { "" }
 typePat           : | type1 { "" }
 
-ascription        : | COLON infixType { "" }
-                    | COLON annotation annotation* { "" }
+ascription        : | COLON type1 { "" }/*
+                    | COLON annotation annotation* { "" }*/
                     | COLON UBAR MUL { "" }
 
-expr              : /*| bindings ARROW expr { "" }*/
-                    | IMPLICIT id ARROW expr { "" }
+expr              : | IMPLICIT id ARROW expr { "" }
                     | id ARROW expr { "" }
                     | UBAR ARROW expr { "" }
                     | expr1 { "" }
@@ -182,9 +195,9 @@ expr1             : | IF LPAREN expr RPAREN nl? expr { "" }
                     | simpleExpr DOT id EQ expr { "" }
                     | simpleExpr1 argumentExprs { "" }
                     | postfixExpr { "" }
-                    /*
+                    
                     | postfixExpr ascription { "" }
-                    | postfixExpr MATCH LBRACE caseClauses RBRACE { "" }
+                    /*| postfixExpr MATCH LBRACE caseClauses RBRACE { "" }
                     */
 /*
 lbrace_block_rbrace_or_expr
@@ -203,42 +216,49 @@ prefixExpr        : | SUB simpleExpr { "" }
                     | NOT simpleExpr { "" }
                     | simpleExpr { $1 }
 simpleExpr        : /*| NEW classTemplate { "" }
-                    | NEW templateBody { "" }
-                    | blockExpr { "" }*/
+                    | NEW templateBody { "" }*/
+                    | blockExpr { $1 }
                     | simpleExpr1 { $1 }                    
                     | simpleExpr1 UBAR { $1 ^ "_" }
 
 simpleExpr1       : | literal { "" }
                     | path { $1 }
                     | UBAR { "" }
+                    | LPAREN exprs? RPAREN ARROW expr { "" }
                     | LPAREN exprs? RPAREN { "" }
-                    | simpleExpr DOT id { "" }/*
-                    | simpleExpr typeArgs { "" }*/
+                    | simpleExpr DOT id { "" }
+                    | simpleExpr typeArgs { "" }
                     | simpleExpr1 argumentExprs { "" }
                     | xmlExpr { "" }
 
 exprs             : | expr comma_expr* { "" }
 comma_expr        : | COMMA expr { "" }
+
+                    /*| id colon_type { "" }
+                    | UBAR colon_type { "" }*/
+
 argumentExprs     : | LPAREN exprs? RPAREN { "" }
 /*
                     | LPAREN exprs_comma? postfixExpr COLON UBAR MUL RPAREN { "" }
                     | NL? blockExpr { "" }
 exprs_comma       : | exprs COMMA { "" }
-blockExpr         : | LBRACE caseClauses RBRACE { "" }
+*/
+blockExpr         : /*| LBRACE caseClauses RBRACE { "" }*/
                     | LBRACE block RBRACE { "" }
-block             : | blockStat? semi_blockStat* resultExpr? { "" }
+block             : | blockStat? semi_blockStat* { "" }
+                    /*| blockStat? semi_blockStat* resultExpr { "" }*/
 semi_blockStat    : | semi blockStat? { "" }
-blockStat         : | import { "" }
+blockStat         : /*| import { "" }
                     | annotation* IMPLICIT def { "" }
                     | annotation* LAZY def { "" }
                     | annotation* def { "" }
-                    | annotation* localModifier* tmplDef { "" }
+                    | annotation* localModifier* tmplDef { "" }*/
                     | expr1 { "" }
-resultExpr        : | expr1 { "" }
-                    | bindings ARROW block { "" }
+/*
+resultExpr        : | bindings ARROW block { "" }
                     | IMPLICIT? id COLON compoundType ARROW block { "" }
-                    | UBAR COLON compoundType ARROW block { "" }
-
+                    | UBAR COLON compoundType ARROW block { "" }*/
+/*
 enumerators       : | generator semi_generator* { "" }
 semi_generator    : | semi generator { "" }
 generator         : | pattern1 GARROW expr generator_v* { "" }
@@ -319,11 +339,8 @@ classParam        : | annotation* modifier* val_or_var?
                        id COLON paramType eq_expr? { "" }
 val_or_var        : | VAL { "" }
                     | VAR { "" }
-bindings          : | LPAREN binding comma_binding* RPAREN { "" }
-comma_binding     : | COMMA binding { "" }
-binding           : | id colon_type? { "" }
-                    | UBAR colon_type? { "" }
-
+                    */
+/*
 modifier          : | localModifier { "" }
                     | accessModifier { "" }
                     | OVERRIDE { "" }
