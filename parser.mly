@@ -97,6 +97,9 @@ type e =
 %type <string> main
 %start main
 
+%type <string> main2
+%start main2
+
 %%
 
 
@@ -117,9 +120,9 @@ literal           : | SUB? IntegerLiteral { Printf.printf "%s%Ld\n" (match $1 wi
                     | StringLiteral { $1 }
                     | SymbolLiteral { $1 }
                     | NULL { "" }
-                    /*
+                    
 qualId            : | id dot_qualId* { "" }
-dot_qualId        : | DOT qualId { "" }*/
+dot_qualId        : | DOT qualId { "" }
 ids               : | id comma_id* { "" }
 comma_id          : | COMMA id  { "" }
 path              : | stableId { Printf.printf "path %s\n" $1; $1 }
@@ -326,14 +329,14 @@ params            : | param comma_param* { "" }
 comma_param       : | COMMA param { "" }
 param             : | annotation* id coron_paramType? eq_expr? { "" }
 coron_paramType   : | COLON paramType { "" }
-eq_expr           : | EQ expr { "" }
 */
+eq_expr           : | EQ expr { "" }
 paramType         : | type1 { "" }
                     | ARROW type1 { "" }
                     | type1 MUL { "" }
-/*
-classParamClauses : | classParamClause* { "" }
-                    | classParamClause* NL? LPAREN IMPLICIT classParams RPAREN { "" }
+
+classParamClauses : | classParamClause* { "" }/*
+                    | classParamClause* NL? LPAREN IMPLICIT classParams RPAREN { "" }*/
 classParamClause  : | NL? LPAREN classParams? RPAREN { "" }
 classParams       : | classParam comma_classParam* { "" }
 comma_classParam  : | COMMA classParam { "" }
@@ -341,21 +344,23 @@ classParam        : | annotation* modifier* val_or_var?
                        id COLON paramType eq_expr? { "" }
 val_or_var        : | VAL { "" }
                     | VAR { "" }
-                    */
-/*
+                
+
 modifier          : | localModifier { "" }
                     | accessModifier { "" }
                     | OVERRIDE { "" }
+                    
 localModifier     : | ABSTRACT { "" }
                     | FINAL { "" }
                     | SEALED { "" }
                     | IMPLICIT { "" }
                     | LAZY { "" }
+                    
 accessModifier    : | PRIVATE accessQualifier? { "" }
                     | PROTECTED accessQualifier? { "" }
 accessQualifier   : | LBRACK id RBRACK { "" }
                     | LBRACK THIS RBRACK { "" }
-*/
+
 annotation        : | AT simpleType argumentExprs* { "" }
 /*constrAnnotation  : | AT simpleType argumentExprs { "" }
 
@@ -366,7 +371,9 @@ templateStat      : | import { "" }
                     | annotation_nl* modifier* dcl { "" }
                     | expr { "" }
                     | { "" }
+                    */
 annotation_nl     : | annotation NL? { "" }
+/*
 selfType          : | id colon_type? ARROW { "" }
                     | THIS COLON type1 ARROW { "" }
 
@@ -414,12 +421,14 @@ funDef            : | funSig colon_type? EQ expr { "" }
                     | THIS paramClause paramClauses NL? constrBlock { "" }
 */
 typeDef           : | id typeParamClause? EQ type1 { "" }
-/*
+
 tmplDef           : | CASE? CLASS classDef { "" }
-                    | CASE? OBJECT objectDef { "" }
-                    | TRAIT traitDef { "" }
-classDef          : | id typeParamClause? constrAnnotation* accessModifier?
-                       classParamClauses classTemplateOpt? { "" }
+/*                    | CASE? OBJECT objectDef { "" }
+                    | TRAIT traitDef { "" }*/
+classDef          : | id classParamClauses { "" }
+                    /*
+                    | id typeParamClause? constrAnnotation* accessModifier?
+                       classParamClauses classTemplateOpt? { "" }*//*
 traitDef          : | id typeParamClause? traitTemplateOpt? { "" }
 objectDef         : | id classTemplateOpt { "" }
 classTemplateOpt  : | EXTENDS classTemplate { "" }
@@ -441,21 +450,23 @@ constrExpr        : | selfInvocation { "" }
                     | constrBlock { "" }
 constrBlock       : | LBRACE selfInvocation semi_blockStat* RBRACE { "" }
 selfInvocation    : | THIS argumentExprs argumentExprs* { "" }
-
+*/
 topStatSeq        : | topStat semi_topStat* { "" }
 semi_topStat      : | semi topStat { "" }
 topStat           : | annotation_nl* modifier* tmplDef { "" }
-                    | import { "" }
+/*                    | import { "" }
                     | packaging { "" }
                     | packageObject { "" }
                     | { "" }
 packaging         : | PACKAGE qualId NL? LBRACE topStatSeq RBRACE { "" }
 packageObject     : | PACKAGE OBJECT objectDef { "" }
-
+*/
 compilationUnit   : | package_qualId_semi* topStatSeq { "" }
 package_qualId_semi
                   : | PACKAGE qualId semi { "" }
-*/
+
 
 xmlExpr           : | XML { "" }
 xmlPattern        : | XMLPATTERN { "" }
+
+main2              : | compilationUnit EOF { $1 }

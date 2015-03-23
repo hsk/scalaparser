@@ -111,6 +111,20 @@ let () =
   test_string Parser.main "for(i <- is)yield println(i)";
   test_string Parser.main "for{x <- xs}yield println(x)";
 
+  test_string Parser.main2 "class A(a:Int)";
+  test_string Parser.main2 "class A(a:Int,b:Int)";
+  test_string Parser.main2 "case class A(a:Int)";
+  test_string Parser.main2 "abstract class A(a:Int)";
+  test_string Parser.main2 "final class A(a:Int)";
+  test_string Parser.main2 "sealed class A(a:Int)";
+  test_string Parser.main2 "implicit class A(a:Int)";
+  test_string Parser.main2 "lazy class A(a:Int)";
+
+  test_string Parser.main2 "private class A(a:Int)";
+  test_string Parser.main2 "protected class A(a:Int)";
+  test_string Parser.main2 "private[this] class A(a:Int)";
+  test_string Parser.main2 "protected[B] class A(a:Int)";
+  test_string Parser.main2 "override class A(a:Int)";
 (*  test_string Parser.main "return";  return *)
 
   Printf.printf "ok\n";
