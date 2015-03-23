@@ -34,8 +34,8 @@ let floatType    = ['F' 'f' 'D' 'd']
 
 let stringElement = printableCharNoDoubleQuote | charEscapeSeq
 let multiLineChars = ('"'? '"'? [^ '"'])* '"'*
-let plainid = upper idrest?
-let valid = lower idrest?
+let plainid = upper idrest*
+let valid = lower idrest*
 
 rule token = parse
 | whiteSpace+ { token lexbuf }

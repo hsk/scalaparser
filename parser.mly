@@ -214,13 +214,13 @@ simpleExpr1       : | literal { "" }
                     | UBAR { "" }
                     | LBRACE exprs? RBRACE { "" }
 /*                    | simpleExpr DOT id { "" }
-                    | simpleExpr typeArgs { "" }
-                    | simpleExpr1 argumentExprs { "" }*/
+                    | simpleExpr typeArgs { "" }*/
+                    | simpleExpr1 argumentExprs { "" }
                     | xmlExpr { "" }
 
 exprs             : | expr comma_expr* { "" }
 comma_expr        : | COMMA expr { "" }
-argumentExprs     : | LBRACE exprs? RBRACE { "" }
+argumentExprs     : | LPAREN exprs? RPAREN { "" }
 /*
                     | LBRACE exprs_comma? postfixExpr COLON UBAR MUL RBRACE { "" }
                     | NL? blockExpr { "" }

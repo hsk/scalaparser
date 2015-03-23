@@ -55,6 +55,7 @@ let () =
   test_string Parser.main "while(true) 12";
   test_string Parser.main "do 2 while(ab) ";
   test_string Parser.main "a = 50 ";
+  test_string Parser.main "println(10)";
 (*  test_string Parser.main "return";  return *)
 
   Printf.printf "ok\n";
