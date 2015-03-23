@@ -125,7 +125,7 @@ rule token = parse
 | '*' { MUL }
 | '~' { TILDA }
 | '!' { NOT }
-| '.' { DOT }
+| '.' { Printf.printf "dot!!\n"; DOT }
 | ',' { COMMA }
 | '|' { OR }
 | "<" as s { OP (String.make 1 s) }

@@ -4612,7 +4612,7 @@ let
 
   | 76 ->
 # 128 "lexer.mll"
-      ( DOT )
+      ( Printf.printf "dot!!\n"; DOT )
 # 4617 "lexer.ml"
 
   | 77 ->
