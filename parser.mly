@@ -94,7 +94,7 @@ type e =
 /*
 %rright*/
 
-%type <E> main
+%type <string> main
 %start main
 
 %%
@@ -146,7 +146,7 @@ existentialDcl    : | TYPE typeDcl { "" }
                     | VAL valDcl { "" }
 
 infixType         : | compoundType { "" }
-                    /*| compoundType id_nl_compoundType+ { "" }*/
+                    | compoundType id_nl_compoundType+ { "" }
 id_nl_compoundType
                   : | id_nl compoundType { "" }
 id_nl             : | id NL? { $1 }
@@ -197,8 +197,8 @@ expr1             : | IF LPAREN expr RPAREN nl? expr { "" }
                     | postfixExpr { "" }
                     
                     | postfixExpr ascription { "" }
-                    /*| postfixExpr MATCH LBRACE caseClauses RBRACE { "" }
-                    */
+                    | postfixExpr MATCH LBRACE caseClauses RBRACE { "" }
+                    
 /*
 lbrace_block_rbrace_or_expr
                   : | LBRACE block RBRACE { "" }
@@ -263,18 +263,20 @@ enumerators       : | generator semi_generator* { "" }
 semi_generator    : | semi generator { "" }
 generator         : | pattern1 GARROW expr generator_v* { "" }
      generator_v  : | semi? guard { "" }
-                    | semi pattern1 EQ expr { "" }
-caseClauses       : | caseClause caseClause* { "" }
-caseClause        : | CASE pattern guard? ARROW block { "" }
-guard             : | IF postfixExpr { "" }
+                    | semi pattern1 EQ expr { "" }*/
+caseClauses       : | caseClause+ { "" }
+caseClause        : | CASE pattern ARROW block { "" }
+                    /*| CASE pattern guard ARROW block { "" }
+guard             : | IF postfixExpr { "" }*/
 
-pattern           : | pattern1 or_pattern1* { "" }
+pattern           : | pattern1 { "" }
+                    /*| pattern1 or_pattern1* { "" }*/
 or_pattern1       : | OR pattern1 { "" }
-pattern1          : | VALID COLON typePat { "" }
-                    | UBAR COLON typePat { "" }
+pattern1          : /*| VALID COLON typePat { "" }
+                    | UBAR COLON typePat { "" }*/
                     | pattern2 { "" }
 pattern2          : | VALID { "" }
-                    | valid_at? pattern3 { "" }
+                    /*| valid_at? pattern3 { "" }
 valid_at          : | VALID AT { "" }
 pattern3          : | simplePattern { "" }
                     | simplePattern id_nl_simplePattern* { "" }

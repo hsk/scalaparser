@@ -91,6 +91,7 @@ let () =
   test_string Parser.main "List[String](1,2,3)";
   test_string Parser.main "a:Int.type";
   test_string Parser.main "a:Int#aa";
+  test_string Parser.main "a match {case x => x}";
 (*  test_string Parser.main "return";  return *)
 
   Printf.printf "ok\n";
