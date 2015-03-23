@@ -81,7 +81,6 @@
 
 %nonassoc RPAREN
 %nonassoc ELSE
-
 /*
 %rright*/
 
@@ -98,7 +97,7 @@ semi              : | SEMI { "" }
 plainid           : | PLAINID { $1 }
                     | VALID { $1 }
                     | OP { $1 }
-id                : | plainid { Printf.printf "id %s\n" $1; "" }
+id                : | plainid { Printf.printf "id %s\n" $1; $1 }
                     | QQUOTE StringLiteral QQUOTE { "" }
 
 literal           : | SUB? IntegerLiteral { Printf.printf "%s%Ld\n" (match $1 with | Some _ -> "-" | _ -> "") $2 ; "" }
@@ -108,16 +107,16 @@ literal           : | SUB? IntegerLiteral { Printf.printf "%s%Ld\n" (match $1 wi
                     | StringLiteral { $1 }
                     | SymbolLiteral { $1 }
                     | NULL { "" }
+                    /*
 qualId            : | id dot_qualId* { "" }
-dot_qualId        : | DOT qualId { "" }
+dot_qualId        : | DOT qualId { "" }*/
 ids               : | id comma_id* { "" }
 comma_id          : | COMMA id  { "" }
-path              : | stableId { "" }
-                    | id_dot? THIS { "" }
-id_dot            : | id DOT { "" }
-stableId          : | id { "" }
-                    | path DOT id { "" }
-                    | id_dot? SUPER classQualifier? DOT id { "" }
+path              : | stableId { Printf.printf "path %s\n" $1; $1 }
+stableId          : | id { Printf.printf "stableId '%s'\n" $1; $1 }
+                    | path DOT id { "id_dot_id" }
+                    | path DOT THIS { "this" }
+                    | path DOT SUPER classQualifier? DOT id { "" }
 classQualifier    : | LBRACK id RBRACK { "" }
 
 type1             : | functionArgTypes ARROW type1 { "" }
@@ -146,7 +145,7 @@ annotType         : | simpleType annotation* { "" }
 simpleType        : | simpleType typeArgs { "" }
                     | simpleType SHARP id { "" }
                     | stableId { "" }
-                    | path DOT TYPE { "" }
+                    /*| path DOT TYPE { "" }*/
                     | LBRACE types RBRACE { "" }
 typeArgs          : | LBRACK types RBRACK { "" }
 types             : | type1 comma_type* { "" }
@@ -212,8 +211,8 @@ simpleExpr        : /*| NEW classTemplate { "" }
 simpleExpr1       : | literal { "" }
                     | path { "" }
                     | UBAR { "" }
-                    | LBRACE exprs? RBRACE { "" }
-/*                    | simpleExpr DOT id { "" }
+                    | LPAREN exprs? RPAREN { "" }
+                    | simpleExpr DOT id { "" }/*
                     | simpleExpr typeArgs { "" }*/
                     | simpleExpr1 argumentExprs { "" }
                     | xmlExpr { "" }
