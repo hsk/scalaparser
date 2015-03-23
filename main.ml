@@ -54,15 +54,24 @@ let () =
 
   test_string Parser.main "while(true) 12";
   test_string Parser.main "do 2 while(ab) ";
-  test_string Parser.main "a = 50 ";
   test_string Parser.main "println(10)";
   test_string Parser.main "ab";
   test_string Parser.main "abc";
   test_string Parser.main "ab . abc";
-  test_string Parser.main "a.b.c";
+  test_string Parser.main "a.b.ccc";
   test_string Parser.main "(a)";
   test_string Parser.main "(a,b)";
-  test_string Parser.main "(a.b.c).a.c";
+  test_string Parser.main "(a.b.cd).a";
+  test_string Parser.main "55";
+  test_string Parser.main "(cd).a.ce";
+  test_string Parser.main "66";
+  test_string Parser.main "(a).a = 3";
+  test_string Parser.main "(a).a.b = 4";
+  test_string Parser.main "a.a = 5";
+  test_string Parser.main "a = 5";
+  test_string Parser.main "ubar _";
+  test_string Parser.main "a add c add d";
+  test_string Parser.main "a add";
 
 (*  test_string Parser.main "return";  return *)
 

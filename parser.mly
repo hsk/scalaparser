@@ -137,7 +137,7 @@ existentialDcl    : | TYPE typeDcl { "" }
 infixType         : | compoundType id_nl_compoundType* { "" }
 id_nl_compoundType
                   : | id_nl compoundType { "" }
-id_nl             : | id NL? { "" }
+id_nl             : | id NL? { $1 }
 compoundType      : | annotType with_annotType* refinement? { "" }
 with_annotType    : | WITH annotType { "" }
                     | refinement { "" }
@@ -178,38 +178,38 @@ expr1             : | IF LPAREN expr RPAREN nl? expr { "" }
                     | THROW expr { "" }
                     | RETURN { Printf.printf "return"; "" }
                     | RETURN expr { "" }
-                    | id EQ expr { "" }/*
+                    | path EQ expr { "" }
                     | simpleExpr DOT id EQ expr { "" }
-                    | simpleExpr1 argumentExprs EQ expr { "" }*/
+                    | simpleExpr1 argumentExprs { "" }
                     | postfixExpr { "" }
                     /*
                     | postfixExpr ascription { "" }
                     | postfixExpr MATCH LBRACE caseClauses RBRACE { "" }
-else              : | semi? ELSE expr { "" }
+                    */
+/*
 lbrace_block_rbrace_or_expr
                   : | LBRACE block RBRACE { "" }
                     | expr { "" }
 catch_lbrace_case_clauses_rbrace :
                     | CATCH LBRACE caseClauses RBRACE { "" }
 finally_expr      : | FINALLY expr { "" }*/
-postfixExpr       : | infixExpr /*id_nl?*/ { "" }
-/*                    | infixExpr id_nl { "" } */
-infixExpr         : | prefixExpr { "" }/*
-                    | infixExpr id_nl infixExpr { "" }*/
+postfixExpr       : | infixExpr /*id_nl?*/ { Printf.printf "postfixExpr %s" $1; $1 }
+                    | infixExpr id_nl { let s = "(" ^ $1 ^ " " ^ $2  ^ ")" in Printf.printf "postfixExpr %s" s; s }
+infixExpr         : | prefixExpr { $1 }
+                    | infixExpr id_nl prefixExpr { "(" ^ $1 ^ " " ^ $2 ^ " " ^ $3 ^ ")" }
 prefixExpr        : | SUB simpleExpr { "" }
                     | ADD simpleExpr { "" }
                     | TILDA simpleExpr { "" }
                     | NOT simpleExpr { "" }
-                    | simpleExpr { "" }
+                    | simpleExpr { $1 }
 simpleExpr        : /*| NEW classTemplate { "" }
                     | NEW templateBody { "" }
                     | blockExpr { "" }*/
-                    | simpleExpr1 { "" }
-                    /*
-                    | simpleExpr1 UBAR %prec right { "" }*/
+                    | simpleExpr1 { $1 }                    
+                    | simpleExpr1 UBAR { $1 ^ "_" }
 
 simpleExpr1       : | literal { "" }
-                    | path { "" }
+                    | path { $1 }
                     | UBAR { "" }
                     | LPAREN exprs? RPAREN { "" }
                     | simpleExpr DOT id { "" }/*
