@@ -125,6 +125,12 @@ let () =
   test_string Parser.main2 "private[this] class A(a:Int)";
   test_string Parser.main2 "protected[B] class A(a:Int)";
   test_string Parser.main2 "override class A(a:Int)";
+  test_string Parser.main2 "import A.a";
+  test_string Parser.main2 "import A._";
+  test_string Parser.main2 "import A.{_}";
+  test_string Parser.main2 "import A.{a,_}";
+  test_string Parser.main2 "import A.{a,b,_}";
+  test_string Parser.main2 "import A.{a=>c,b=>d1,_}";
 (*  test_string Parser.main "return";  return *)
 
   Printf.printf "ok\n";

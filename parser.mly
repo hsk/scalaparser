@@ -376,8 +376,9 @@ annotation_nl     : | annotation NL? { "" }
 /*
 selfType          : | id colon_type? ARROW { "" }
                     | THIS COLON type1 ARROW { "" }
-
+*/
 import            : | IMPORT importExpr comma_importExpr* { "" }
+
 comma_importExpr  : | COMMA importExpr { "" }
 importExpr        : | stableId DOT id_or_ubar_or_importSelectors { "" }
 id_or_ubar_or_importSelectors
@@ -392,7 +393,6 @@ importSelector_or_ubar
                     | UBAR { "" }
 importSelector    : | id { "" }
                     | id ARROW id_or_ubar { "" }
-*/
 dcl               : | VAL valDcl { "" }
                     | VAR varDcl { "" }
 /*                    | DEF funDcl { "" }
@@ -454,7 +454,7 @@ selfInvocation    : | THIS argumentExprs argumentExprs* { "" }
 topStatSeq        : | topStat semi_topStat* { "" }
 semi_topStat      : | semi topStat { "" }
 topStat           : | annotation_nl* modifier* tmplDef { "" }
-/*                    | import { "" }
+                    | import { "" }/*
                     | packaging { "" }
                     | packageObject { "" }
                     | { "" }
