@@ -1,15 +1,18 @@
 .PHONY: all install clean
+USE_OCAMLFIND = true
+OCAMLPACKS[] =
+    ppx_deriving.show
 
 MENHIR_ENABLED = true
 
 OCamlGeneratedFiles(parser.ml lexer.ml)
 
 FILES[] =
+  ast
   parser
   lexer
   main
 
-litreal:
 
 #
 PROGRAM = main

@@ -16,7 +16,7 @@ let digit = ['0' - '9']
 let paren = ['(' ')' '[' ']' '{' '}']
 let delim = ['`' '\'' '"' '.' ';' ',']
 
-let opchar = ['+' '-']
+let opchar = ['+' '-' '*' '%' '/' '<' '>' '=' '!' '~' '|' '&' ':' '#']
 let printableChar = ['\x20' - '\x7F']
 let printableCharNoDoubleQuote = ['\x20' - '\x21' '\x23' - '\x7F']
 let charEscapeSeq = '\\' ['b' 't' 'n' 'f' 'r' '"' '\'' '\\']
@@ -128,14 +128,6 @@ rule token = parse
 | '.' { Printf.printf "dot!!\n"; DOT }
 | ',' { COMMA }
 | '|' { OR }
-| "<" as s { OP (String.make 1 s) }
-| ">" as s { OP (String.make 1 s) }
-| "<=" as s { OP s }
-| ">=" as s { OP s }
-| "==" as s { OP s }
-| "!=" as s { OP s }
-
-| '/' as s { OP (String.make 1 s) }
 | valid as s { VALID(s) }
 | plainid as s { Printf.printf "plainid\n"; PLAINID(s) }
 | op as s { OP(s) }
