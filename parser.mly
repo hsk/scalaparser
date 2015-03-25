@@ -219,43 +219,42 @@ lbrace_block_rbrace_or_expr
 catch_lbrace_case_clauses_rbrace :
                     | CATCH LBRACE caseClauses RBRACE { EId "" }
 finally_expr      : | FINALLY expr { EId "" }
-postfixExpr       : | infixExpr {
-  Printf.printf "post \n";
-  let prec s = 
-    match String.get s 0 with
-    | '#' | '~' | '.' | '?' -> 21
-    | '*' | '/' | '%' -> 20
-    | '+' | '-' -> 19
-    | ':' -> 18
-    | '=' | '!' -> 17
-    | '<' | '>' -> 16
-    | '&' -> 15
-    | '^' -> 14
-    | '|' -> 13
-    | _ -> 12
-  in
-  let is_right s = 
-    match String.get s (String.length s - 1) with
-    | ':' -> true
-    | _ -> false
-  in
-  let rec f p = function
-    | a::((EId op::c) as xs) ->
-      let p1 = prec op in
-      if (is_right op && p1 >= p) || p1 > p then 
-        let b,xs = f p1 c in
-        f p (EBin(a,op,b)::xs)
-      else
-        a,xs
-    | x::xs -> x,xs
-    | xs -> EUnit,xs
-  in
-  let r,_ = f 0 $1 in
-  r
-}
+postfixExpr       : | infixExpr id_nl? {
+                        let prec s = 
+                          match String.get s 0 with
+                          | '#' | '~' | '.' | '?' -> 21
+                          | '*' | '/' | '%' -> 20
+                          | '+' | '-' -> 19
+                          | ':' -> 18
+                          | '=' | '!' -> 17
+                          | '<' | '>' -> 16
+                          | '&' -> 15
+                          | '^' -> 14
+                          | '|' -> 13
+                          | _ -> 12
+                        in
+                        let is_right s = 
+                          match String.get s (String.length s - 1) with
+                          | ':' -> true
+                          | _ -> false
+                        in
+                        let rec f p = function
+                          | a::((EId op::c) as xs) ->
+                            let p1 = prec op in
+                            if (is_right op && p1 >= p) || p1 > p then 
+                              let b,xs = f p1 c in
+                              f p (EBin(a,op,b)::xs)
+                            else
+                              a,xs
+                          | x::xs -> x,xs
+                          | xs -> EUnit,xs
+                        in
+                        let l = match $2 with None -> $1 | Some x -> EId x:: $1 in
+                        let r,_ = f 0 (List.rev l) in
+                        r
+                      }
 infixExpr         : | prefixExpr { [$1] }
-                    | prefixExpr id_nl infixExpr { $1 :: EId $2 :: $3 }
-                    | prefixExpr id_nl { $1 :: [EId $2] }
+                    | infixExpr id_nl prefixExpr { $3 :: EId $2 :: $1 }
 prefixExpr        : | SUB simpleExpr { EPre("-", $2) }
                     | ADD simpleExpr { EPre("+", $2) }
                     | TILDA simpleExpr { EPre("~", $2) }
