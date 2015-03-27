@@ -2,8 +2,9 @@
 USE_OCAMLFIND = true
 OCAMLPACKS[] =
     ppx_deriving.show
-
+OCAMLFLAGS += -g
 MENHIR_ENABLED = true
+OCAMLRUNPARAM=b 
 
 OCamlGeneratedFiles(parser.ml lexer.ml)
 

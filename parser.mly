@@ -121,7 +121,17 @@ plainid           : | PLAINID { $1 }
                     | OR    { "|" }
 
 
-id                : | plainid { Printf.printf "id %s\n" $1; $1 }
+id                : | plainid {
+                        Printf.printf "id %s " $1;
+                        for i=0 to String.length $1 - 1 do
+                          let p = int_of_char (String.get $1 i ) in
+                          if p < 128 then Printf.printf "%c" (String.get $1 i ) else
+                          if p < 180 then Printf.printf "\\\\%d" p
+                          else Printf.printf "\\x%02x" p
+                        done;
+                        Printf.printf "\n";
+                        $1
+                      }
                     | QQUOTE StringLiteral QQUOTE { "" }
 
 literal           : | SUB? IntegerLiteral { EInt (match $1 with | Some _ -> Int64.neg $2 | _ ->  $2) }
@@ -141,14 +151,11 @@ stableId          : | id { EId $1 }
                     | path DOT id { EGet($1, $3) }
                     | path DOT THIS { EGet($1, "this") }
                     | path DOT SUPER classQualifier? DOT id { EGet(EGet($1,"super"),$6) }
-classQualifier    : | LBRACK id RBRACK { "" }
+classQualifier    : | LBRACK id RBRACK { $2 }
 
-type1             : | functionArgTypes ARROW type1 { EFun([List.map (fun x -> x,EUnit) $1],$3,EUnit) }
-                    | infixType { $1 }
-                    /*| infixType existentialClause { "" }*/
-
-functionArgTypes  : | infixType { [$1] }
-                    | LPAREN paramtypes RPAREN { $2 }
+type1             : | infixType ARROW type1 { EFun([List.map (fun x -> x,EUnit) $1],$3,EUnit) }
+                    | infixType { EBlock $1 }
+                    | infixType existentialClause { EBlock $1 }
                     
 paramtypes        : | { [] }
                     | paramType { [$1] }
@@ -162,22 +169,19 @@ existentialDcl    : | TYPE typeDcl { "" }
 infixType         : | compoundType { $1 }
                     | compoundType id_nl_compoundType+ { $1 }
 id_nl_compoundType
-                  : | id_nl compoundType { "" }
+                  : | id_nl compoundType { $2 }
 id_nl             : | id NL? { $1 }
-compoundType      : | annotType  { $1 }
-                    /*| annotType with_annotType* refinement? { "" }*/
-with_annotType    : | WITH annotType { "" }
-                    | refinement { "" }
-annotType         : | simpleType { $1 }
-                    /*| simpleType annotation* { "" }*/
-simpleType        : /*| simpleType typeArgs { "" }*/
+compoundType      : | annotType with_annotType* refinement? { $1::$2 }
+with_annotType    : | WITH annotType { $2 }
+annotType         : | simpleType annotation* { Printf.printf "annotType %s\n" (show_e $1);$1 }
+simpleType        : | simpleType typeArgs { $1 }
                     | simpleType SHARP id { EBin($1, "#", EId $3) }
-                    | stableId { $1 }
-                    | path DOT TYPE { EGet($1, "type") }
-                    /*| LPAREN types RPAREN { "" }*/
-typeArgs          : | LBRACK types RBRACK { "" }
-types             : | type1 comma_type* { "" }
-comma_type        : | COMMA type1 { "" }
+                    | stableId { Printf.printf "simpleType\n"; $1 }
+                    | path DOT TYPE { Printf.printf "simpleType\n"; EGet($1, "type") }
+                    | LPAREN paramtypes RPAREN { EBlock $2 }
+typeArgs          : | LBRACK types RBRACK { $2 }
+types             : | type1 comma_type* { $1::$2 }
+comma_type        : | COMMA type1 { $2 }
 refinement        : | NL? LBRACE refineStat semi_refineStat* RBRACE { "" }
 semi_refineStat   : | semi refineStat { "" }
 refineStat        : | dcl { "" }
@@ -185,8 +189,8 @@ refineStat        : | dcl { "" }
                     | { "" }
 typePat           : | type1 { "" }
 
-ascription        : | COLON type1 { $2 }/*
-                    | COLON annotation annotation* { "" }*/
+ascription        : | COLON type1 { $2 }
+                    | COLON annotation+ { EId "" }
                     | COLON UBAR MUL { EListParam }
 
 expr              : | IMPLICIT id ARROW expr { EFun([[EId $2,EUnit]],EUnit ,$4)  }
@@ -198,24 +202,24 @@ expr1             : | IF LPAREN expr RPAREN nl? expr { EIf($3, $6, EUnit) }
                     | IF LPAREN expr RPAREN nl? expr semi ELSE expr { EIf($3, $6, $9) }
 
                     | WHILE LPAREN expr RPAREN NL* expr { EWhile($3,$6) }
-                    | TRY lbrace_block_rbrace_or_expr catch_lbrace_case_clauses_rbrace? finally_expr? { EId "" }
+                    | TRY lbrace_block_rbrace_or_expr catch_lbrace_case_clauses_rbrace? finally_expr? { ETry($2,$3,$4) }
                     | DO expr semi? WHILE LPAREN expr RPAREN { EDo($2, $6) }
-                    | FOR LPAREN enumerators RPAREN NL* YIELD? expr { EId "" }
-                    | FOR LBRACE enumerators RBRACE NL* YIELD? expr { EId "" }
+                    | FOR LPAREN enumerators RPAREN NL* YIELD? expr { EFor ($3,($6<>None), $7) }
+                    | FOR LBRACE enumerators RBRACE NL* YIELD? expr { EFor ($3,($6<>None), $7) }
                     | THROW expr { EThrow $2 }
                     | RETURN { Printf.printf "return"; EReturn EUnit }
                     | RETURN expr { EReturn $2 }
                     | path EQ expr { match $1 with | EGet(a,b)-> EPut(a,b,$3) | _ -> EAssign($1, $3) }
                     | simpleExpr DOT id EQ expr { EPut($1, $3, $5) }
-                    | simpleExpr1 argumentExprs { ECall($1, $2) }
+                    | simpleExpr1 argumentExprs EQ expr { EAssign(ECall($1, $2),$4) }
                     | postfixExpr { $1 }
                     
                     | postfixExpr ascription { ETyped($1, $2) }
-                    | postfixExpr MATCH LBRACE caseClauses RBRACE { EId "" }
+                    | postfixExpr MATCH LBRACE caseClauses RBRACE { EMatch($1, $4) }
                     
 lbrace_block_rbrace_or_expr
                   : | LBRACE block RBRACE { EId "" }
-                    | expr { EId "" }
+                    | expr { $1 }
 catch_lbrace_case_clauses_rbrace :
                     | CATCH LBRACE caseClauses RBRACE { EId "" }
 finally_expr      : | FINALLY expr { EId "" }
@@ -260,8 +264,8 @@ prefixExpr        : | SUB simpleExpr { EPre("-", $2) }
                     | TILDA simpleExpr { EPre("~", $2) }
                     | NOT simpleExpr { EPre("!", $2) }
                     | simpleExpr { $1 }
-simpleExpr        : | NEW classTemplate { EId "" }
-                    | NEW templateBody { EId "" }
+simpleExpr        : | NEW classTemplate { ENew($2) }
+                    | NEW templateBody { ENew(ETMBody $2) }
                     | blockExpr { $1 }
                     | simpleExpr1 { $1 }              
                     | simpleExpr1 UBAR { EPost($1,"_") }
@@ -272,25 +276,22 @@ simpleExpr1       : | literal { $1 }
                     | LPAREN exprs? RPAREN ARROW expr { EFun([match $2 with | None -> [] | Some xs -> List.map(fun x->(x,EUnit))xs],EUnit,$5) }
                     | LPAREN exprs? RPAREN { Printf.printf "simp1\n"; match $2 with | None -> EUnit | Some [x] -> x | Some xs -> ETuple xs }
                     | simpleExpr DOT id { EGet($1, $3) }
-                    | simpleExpr typeArgs { EId "" }
+                    | simpleExpr typeArgs { EType($1,$2) }
                     | simpleExpr1 argumentExprs { ECall($1,$2) }
                     | xmlExpr { EId "" }
 
 exprs             : | expr comma_expr* { $1::$2 }
 comma_expr        : | COMMA expr { $2 }
 
-                    /*| id colon_type { "" }
-                    | UBAR colon_type { "" }*/
-
 argumentExprs     : | LPAREN exprs? RPAREN { Printf.printf "argexps\n"; match $2 with | None -> [] | Some xs -> xs }
 /*
-                    | LPAREN exprs_comma? postfixExpr COLON UBAR MUL RPAREN { "" }
-                    | NL? blockExpr { "" }*/
-/*                    | { "" }*/
+                    | LPAREN exprs_comma? postfixExpr COLON UBAR MUL RPAREN { "" }*/
+                    /*| NL? blockExpr { [$2] }*/
+                    /*| { [] }*/
 /*
 exprs_comma       : | exprs COMMA { "" }
 */
-blockExpr         : | LBRACE caseClauses RBRACE { EId "" }
+blockExpr         : | LBRACE caseClauses RBRACE { EPartial $2 }
                     | LBRACE block RBRACE { EBlock $2 }
 block             : | blockStat? semi_blockStat* {
                         let l = List.fold_left(fun l -> function | None -> l | Some x -> x::l) [] $2 in
@@ -298,24 +299,24 @@ block             : | blockStat? semi_blockStat* {
                         match $1 with None -> l | Some x -> x::l }
                     /*| blockStat? semi_blockStat* resultExpr { "" }*/
 semi_blockStat    : | semi blockStat? { $2 }
-blockStat         : /*| import { "" }
-                    | annotation* IMPLICIT def { "" }
-                    | annotation* LAZY def { "" }
-                    | annotation* def { "" }
-                    | annotation* localModifier* tmplDef { "" }*/
+blockStat         : | import { EImport $1 }
+                    | annotation* IMPLICIT def { EId "" }
+                    | annotation* LAZY def { EId "" }
+                    | annotation* def { EId "" }
+                    | annotation* localModifier* tmplDef { EId "" }
                     | expr1 { $1 }
 /*
 resultExpr        : | bindings ARROW block { "" }
                     | IMPLICIT? id COLON compoundType ARROW block { "" }
                     | UBAR COLON compoundType ARROW block { "" }*/
 
-enumerators       : | generator semi_generator* { "" }
-semi_generator    : | semi generator { "" }
-generator         : | pattern1 GARROW expr generator_v* { "" }
+enumerators       : | generator semi_generator* { $1::$2 }
+semi_generator    : | semi generator { $2 }
+generator         : | pattern1 GARROW expr generator_v* { "generator" }
 generator_v       : | semi? guard { "" }
                     | semi pattern1 EQ expr { "" }
-caseClauses       : | caseClause+ { "" }
-caseClause        : | CASE pattern ARROW block { "" }
+caseClauses       : | caseClause+ { $1 }
+caseClause        : | CASE pattern ARROW block { ($2, $4) }
                     /*| CASE pattern guard ARROW block { "" }*/
 guard             : | IF postfixExpr { "" }
 
@@ -328,23 +329,23 @@ pattern1          : /*| VALID COLON typePat { "" }
 pattern2          : | VALID { "" }
                     | valid_at? pattern3 { "" }
 valid_at          : | VALID AT { "" }
-pattern3          : | simplePattern { "" }
-                    /*| simplePattern id_nl_simplePattern* { "" }*/
+pattern3          : | simplePattern id_nl_simplePattern* { "" }
 id_nl_simplePattern
                   : | id_nl simplePattern { "" }
 simplePattern     : | UBAR { "" }
                     | VALID { "" }
                     | literal { "" }
                     | stableId { "" }
-                    | stableId LPAREN patterns? RPAREN { "" }/*
-                    | stableId LPAREN patterns_comma? valid_at? UBAR MUL RPAREN { "" }*/
+                    | stableId LPAREN patterns_u RPAREN { "" }
                     | LPAREN patterns? RPAREN { "" }/*
                     | xmlPattern { "" }
                     */
-patterns_comma    : | patterns COMMA { "" }
-patterns          : | pattern comma_patterns? { "" }
-/*                    | UBAR MUL { "" }*/
-comma_patterns    : | COMMA patterns { "" }
+patterns_u        : | pattern { "" }
+                    | pattern COMMA patterns_u { "" }
+                    | valid_at? UBAR MUL { "" }
+
+patterns          : | pattern { "" }
+                    | pattern COMMA patterns { "" }
 
 typeParamClause   : | LBRACK variantTypeParam comma_variantTypeParam* RBRACK { "" }
 comma_variantTypeParam
@@ -365,7 +366,7 @@ id_or_ubar        : | id { EId $1 }
 rcolon_type       : | RCOLON type1 { "" }
 lcolon_type       : | LCOLON type1 { "" }
 lmod_type         : | LMOD type1 { "" }
-colon_type        : | COLON type1 { "" }
+colon_type        : | COLON type1 { $2 }
 
 
 paramClauses      : | paramClause* { "" }/*
@@ -375,18 +376,19 @@ params            : | param comma_param* { "" }
 comma_param       : | COMMA param { "" }
 param             : | annotation* id coron_paramType? eq_expr? { "" }
 coron_paramType   : | COLON paramType { "" }
-eq_expr           : | EQ expr { "" }
+eq_expr           : | EQ expr { $2 }
 paramType         : | type1 { $1 }
                     | ARROW type1 { EArrow $2 }
                     | type1 MUL { EListPrm $1 }
 
-classParamClauses : | classParamClause* { "" }/*
+classParamClauses : | classParamClause* { $1 }/*
                     | classParamClause* NL? LPAREN IMPLICIT classParams RPAREN { "" }*/
-classParamClause  : | NL? LPAREN classParams? RPAREN { "" }
-classParams       : | classParam comma_classParam* { "" }
-comma_classParam  : | COMMA classParam { "" }
-classParam        : | annotation* modifier* val_or_var?
-                       id COLON paramType eq_expr? { "" }
+classParamClause  : | NL? LPAREN classParams? RPAREN { match $3 with None -> [] | Some x -> x }
+classParams       : | classParam comma_classParam* { $1::$2 }
+comma_classParam  : | COMMA classParam { $2 }
+classParam        : | annotation* modifier* val_or_var? id COLON paramType eq_expr? {
+                        ($1, $2, (match $3 with None -> false | Some x -> x), $4, $6, $7)
+                      }
 val_or_var        : | VAL { false }
                     | VAR { true }
                 
@@ -401,27 +403,27 @@ localModifier     : | ABSTRACT { AAbstract }
                     | IMPLICIT { AImplicit }
                     | LAZY { ALazy }
                     
-accessModifier    : | PRIVATE accessQualifier? { APrivate }
-                    | PROTECTED accessQualifier? { AProtected }
-accessQualifier   : | LBRACK id RBRACK { "" }
-                    | LBRACK THIS RBRACK { "" }
+accessModifier    : | PRIVATE accessQualifier? { APrivate $2 }
+                    | PROTECTED accessQualifier? { AProtected $2 }
+accessQualifier   : | LBRACK id RBRACK { $2 }
+                    | LBRACK THIS RBRACK { "this" }
 
-annotation        : | AT simpleType argumentExprs* { "" }
-/*constrAnnotation  : | AT simpleType argumentExprs { "" }*/
+annotation        : | AT simpleType argumentExprs* { Annot }
+constrAnnotation  : | AT simpleType argumentExprs { "" }
 
-templateBody      : | LBRACE templateStat RBRACE { "" }
-                    /*| NL? LBRACE selfType? templateStat semi_templateStat* RBRACE { "" }*/
-/*
-semi_templateStat : | semi templateStat { "" }*/
-templateStat      : | import { "" }
-                    | annotation_nl* modifier* def { "" }
-                    | annotation_nl* modifier* dcl { "" }
-                    | expr { "" }
-                    | { "" }
-annotation_nl     : | annotation NL? { "" }
-/*
-selfType          : | id colon_type? ARROW { "" }
-                    | THIS COLON type1 ARROW { "" }*/
+templateBody      : | nl? LBRACE                        templateStat1? semi_templateStat* RBRACE { (None, match $3 with None -> $4 | Some x -> x::$4) }
+                    | nl? LBRACE id colon_type? ARROW   templateStat? semi_templateStat* RBRACE { (Some ($3, $4), match $6 with None -> $7 | Some x -> x::$7) }
+                    | nl? LBRACE THIS COLON type1 ARROW templateStat1? semi_templateStat* RBRACE { (Some ("this", Some $5), match $7 with None -> $8 | Some x -> x::$8) }
+semi_templateStat : | semi templateStat { $2 }
+templateStat1     : | import { TMSImport $1 }
+                    | annotation_nl* modifier* def { TMSDef ($1,$2,$3) }
+                    | annotation_nl* modifier* dcl { TMSDcl ($1,$2,$3) }
+                    | expr1 { TMSExpr $1 }
+templateStat      : | import { TMSImport $1 }
+                    | annotation_nl* modifier* def { TMSDef ($1,$2,$3) }
+                    | annotation_nl* modifier* dcl { TMSDcl ($1,$2,$3) }
+                    | expr { TMSExpr $1 }
+annotation_nl     : | annotation NL? { $1 }
 import            : | IMPORT importExpr comma_importExpr* { $2::$3 }
 
 comma_importExpr  : | COMMA importExpr { $2 }
@@ -452,7 +454,7 @@ typeDcl           : | id typeParamClause? lcolon_type? rcolon_type? { "" }
 
 patVarDef         : | VAL patDef { "" }
                     | VAR varDef { "" }
-def               : /*| patVarDef { "" }*/
+def               : | patVarDef { "" }
                     | DEF funDef { "" }
                     /*| TYPE NL* typeDef { "" }
                     | tmplDef { "" }*/
@@ -466,25 +468,24 @@ funDef            : | funSig colon_type? EQ expr { "" }
                     | THIS paramClause paramClauses NL? constrBlock { "" }
 typeDef           : | id typeParamClause? EQ type1 { "" }
 
-tmplDef           : | CASE? CLASS classDef { Class ($1 <> None) }
+tmplDef           : | CASE? CLASS classDef { Class ($1 <> None, $3) }
                     | CASE? OBJECT objectDef { Object ($1 <> None) }
                     | TRAIT traitDef { Trait }
-classDef          : | id classParamClauses { "" }
-                    /*
-                    | id typeParamClause? constrAnnotation* accessModifier?
-                       classParamClauses classTemplateOpt? { "" }*/
+classDef          : | id typeParamClause? constrAnnotation* accessModifier?
+                      classParamClauses classTemplateOpt? { ($1, $5, $6) }
 traitDef          : | id typeParamClause? traitTemplateOpt? { "" }
 objectDef         : | id classTemplateOpt { "" }
 classTemplateOpt  : | EXTENDS classTemplate { "" }
-                    | EXTENDS? templateBody { "" }
+                    | EXTENDS templateBody { "" }
+                    | templateBody { "" }
 traitTemplateOpt  : | EXTENDS traitTemplate { "" }
-                    | EXTENDS? templateBody { "" }
-classTemplate     : | classParents { "" }
-                    /*| earlyDefs? classParents templateBody? { "" }*/
-traitTemplate     : | /* earlyDefs? */ traitParents /* templateBody? */ { "" }
-classParents      : | constr /*with_annotType* */ { "" }
+                    | EXTENDS templateBody { "" }
+                    | templateBody { "" }
+classTemplate     : | /*earlyDefs?*/ classParents templateBody? { $1 }
+traitTemplate     : | /* earlyDefs? */ traitParents templateBody? { "" }
+classParents      : | constr with_annotType* { $1 }
 traitParents      : | annotType with_annotType* { "" }
-constr            : | annotType argumentExprs* { Printf.printf "constr\n"; "" }
+constr            : | annotType argumentExprs* { List.fold_left (fun x y -> ECall(x, y)) $1 $2 }
 /*
 earlyDefs         : | LBRACE earlyDef_semi_erlyDefs? RBRACE WITH { "" }
 earlyDef_semi_erlyDefs
