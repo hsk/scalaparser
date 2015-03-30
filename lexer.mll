@@ -182,6 +182,7 @@ let stringElement = printableCharNoDoubleQuote | charEscapeSeq
 let multiLineChars = ('"'? '"'? [^ '"'])* '"'*
 let plainid = upper idrest
 let valid = lower idrest
+let identchar = ['A'-'Z' 'a'-'z' '_' '0'-'9' ':' '-']
 
 rule token = parse
 | whiteSpace+ { token lexbuf }
@@ -276,6 +277,11 @@ rule token = parse
 | '.' { Printf.printf "dot!!\n"; DOT }
 | ',' { COMMA }
 | '|' { OR }
+| '<' ['a'-'z']
+  {
+    lexbuf.Lexing.lex_curr_pos <- lexbuf.Lexing.lex_curr_pos - 2;
+    XML (Parser.xmlTag xml_token lexbuf)
+  }
 | valid as s { VALID(s) }
 | plainid as s { Printf.printf "plainid\n"; PLAINID(s) }
 | op as s { OP(s) }
@@ -301,4 +307,70 @@ and import = parse
 and comment = parse
 | "*/" { token lexbuf }
 | _ { comment lexbuf }
+
+and xml_token = parse
+  | '<' (['a'-'z'] ['a'-'z' '0'-'9']* as s) whiteSpace*
+    {
+      match xml_attributes lexbuf with
+      | l,false -> XML_START(s, l)
+      | l,true -> XML_SINGLE(s, l)
+    }
+  | "</" (['a'-'z'] ['a'-'z' '0'-'9']* as s) '>' { XML_STOP s }
+  | "<!--" as s { XML_COMMENT (s ^ xml_comment lexbuf) }
+  | "<![CDATA[" as s { XML_CDATA (s ^ xml_cdata lexbuf) }
+  | eof { EOF }
+  | '{' { XML_EXP (Parser.expr_rparen token lexbuf)}
+  | "" { XML_STR (xml_str lexbuf) }
+
+and xml_attributes = parse
+  | whiteSpace+ { xml_attributes lexbuf }
+  | '>' { [], false }
+  | "/>" { [], true }
+  | '{'
+    {
+      let a = Parser.expr_rparen token lexbuf in
+      let s = xml_eq_value lexbuf in
+      let l,r = xml_attributes lexbuf in
+      ((a,s)::l, r)
+    }
+  | (identchar+ as a)
+    {
+      let s = xml_eq_value lexbuf in
+      let l,r = xml_attributes lexbuf in
+      ((Ast.EString a,s)::l, r)
+    }
+
+and xml_eq_value = parse
+  | whiteSpace* '=' whiteSpace* '"' (([^ '"' '\\'] | '\\' ['"' '\''])* as s) '"'
+    {
+      Ast.EString s
+    }
+  | whiteSpace* '=' whiteSpace* '{'
+    {
+      Parser.expr_rparen token lexbuf
+    }
+
+and xml_spaces = parse
+  | whiteSpace* { () }
+
+and xml_comment = parse
+  | "-->" as s { s }
+  | _ as s { (String.make 1 s) ^ (xml_comment lexbuf) }
+  | eof { assert false }
+
+and xml_cdata = parse
+  | "]]>" as s { s }
+  | _ as s { (String.make 1 s) ^ (xml_cdata lexbuf) }
+  | eof { assert false }
+
+and xml_str = parse
+  | "&amp;" { "&" ^ xml_str lexbuf }
+  | "&lt;"  { "<" ^ xml_str lexbuf }
+  | "&gt;"  { ">" ^ xml_str lexbuf }
+  | "&apos;" { "'" ^ xml_str lexbuf } 
+  | "&quot;" { "\"" ^ xml_str lexbuf  }
+  | "&#" ['0'-'9']+ ";" as s { s ^ xml_str lexbuf }
+  | "&#" ['X' 'x'] ['0'-'9' 'a'-'f' 'A'-'F']+ ";" as s { s ^ xml_str lexbuf }
+  | [^ '<' ] as s { (String.make 1 s) ^ xml_str lexbuf }
+  | "" { "" }
 

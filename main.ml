@@ -107,6 +107,7 @@ let () =
   test Parser.main Ast.show_e "{@o case class A()}" "(Ast.EBlock [(Ast.EId \"\")])";
   test Parser.main Ast.show_e "{@o trait A{}}" "(Ast.EBlock [(Ast.EId \"\")])";
   test Parser.main Ast.show_e "{@o trait A}" "(Ast.EBlock [(Ast.EId \"\")])";
+  test Parser.main Ast.show_e "{@o type a = String}" "(Ast.EBlock [(Ast.EId \"\")])";
 
   test Parser.main Ast.show_e "{block1}" "(Ast.EBlock [(Ast.EId \"block1\")])";
   test Parser.main Ast.show_e "{\nblock2}" "(Ast.EBlock [(Ast.EId \"block2\")])";
@@ -133,8 +134,8 @@ let () =
   (*test Parser.main Ast.show_e "a:Int.type" "";
   test Parser.main Ast.show_e "a:Int#aa" "";
 *)
-  test Parser.main Ast.show_e "{case c => c}" "(Ast.EPartial [(\"\", [(Ast.EId \"c\")])])";
-  test Parser.main Ast.show_e "a match {case x => x}" "Ast.EMatch ((Ast.EId \"a\"), [(\"\", [(Ast.EId \"x\")])])";
+  test Parser.main Ast.show_e "{case c => c}"  "(Ast.EPartial [(\"\", None, [(Ast.EId \"c\")])])";
+  test Parser.main Ast.show_e "a match {case x => x}" "Ast.EMatch ((Ast.EId \"a\"), [(\"\", None, [(Ast.EId \"x\")])])";
   (*
   test Parser.main Ast.show_e "a match {case x|y => y}" "";
   test Parser.main Ast.show_e "a match {case _ => a}" "";
@@ -147,10 +148,9 @@ let () =
   test Parser.main Ast.show_e "a match {case k @ K(x,y) => x}" "";
   test Parser.main Ast.show_e "a match {case k @ K(a,_) => a}" "";
   test Parser.main Ast.show_e "a match {case k @ (b,_) => b}" "";
-  test Parser.main Ast.show_e "a match {case k @ (_,c,_) => b}" "";
-*)
-  test Parser.main Ast.show_e "a match {case A(_ *) => b}" "Ast.EMatch ((Ast.EId \"a\"), [(\"\", [(Ast.EId \"b\")])])";
-  test Parser.main Ast.show_e "a match {case A(a,_ *) => b}" "Ast.EMatch ((Ast.EId \"a\"), [(\"\", [(Ast.EId \"b\")])])";
+  test Parser.main Ast.show_e "a match {case k @ (_,c,_) => b}" "";*)
+  test Parser.main Ast.show_e "a match {case A(_ *) => b}" "Ast.EMatch ((Ast.EId \"a\"), [(\"\", None, [(Ast.EId \"b\")])])";
+  test Parser.main Ast.show_e "a match {case A(a,_ *) => b}" "Ast.EMatch ((Ast.EId \"a\"), [(\"\", None, [(Ast.EId \"b\")])])";
   test Parser.main Ast.show_e "try { t1 } catch {case te => te}" "Ast.ETry ((Ast.EId \"\"), (Some (Ast.EId \"\")), None)";
 
   test Parser.main Ast.show_e "for(i <- is)println(i)" "Ast.EFor ([\"generator\"], false,\n  Ast.ECall ((Ast.EId \"println\"), [(Ast.EId \"i\")]))";
@@ -165,6 +165,15 @@ let () =
   test Parser.main Ast.show_e "new A"  "(Ast.ENew (Ast.EId \"A\"))";
   test Parser.main Ast.show_e "new A(1)" "(Ast.ENew Ast.ECall ((Ast.EId \"A\"), [(Ast.EInt 1L)]))";
   test Parser.main Ast.show_e "new A(1,2)" "(Ast.ENew Ast.ECall ((Ast.EId \"A\"), [(Ast.EInt 1L); (Ast.EInt 2L)]))";
+
+
+  test Parser.main Ast.show_e "<a></a>" "(Ast.EXml (Ast.XmlTag (\"a\", [], [])))";
+  test Parser.main Ast.show_e "<a/>" "(Ast.EXml (Ast.XmlSingle (\"a\", [])))";
+  test Parser.main Ast.show_e "<a>{\"a\"}</a>" "(Ast.EXml (Ast.XmlTag (\"a\", [], [(Ast.XmlExp (Ast.EString \"\\\"a\\\"\"))])))";
+  test Parser.main Ast.show_e "<a k=\"abc\">{\"a\"}</a>" "(Ast.EXml\n   (Ast.XmlTag\n      (\"a\", [((Ast.EString \"k\"), (Ast.EString \"abc\"))],\n       [(Ast.XmlExp (Ast.EString \"\\\"a\\\"\"))])))";
+  test Parser.main Ast.show_e "<a {\"a\"}=\"abc\"></a>" "(Ast.EXml\n   (Ast.XmlTag (\"a\", [((Ast.EString \"\\\"a\\\"\"), (Ast.EString \"abc\"))], [])))";
+  test Parser.main Ast.show_e "<a {\"a\"}={\"abc\"}></a>" "(Ast.EXml\n   (Ast.XmlTag (\"a\", [((Ast.EString \"\\\"a\\\"\"), (Ast.EString \"\\\"abc\\\"\"))], [])))";
+
   test_string Parser.main2 (Ast.show_cu) "class A(a:Int)";
   test_string Parser.main2 (Ast.show_cu) "class A(a:Int,b:Int)";
   test_string Parser.main2 (Ast.show_cu) "case class A(a:Int)";
@@ -217,14 +226,19 @@ let () =
   test_string Parser.main2 (Ast.show_cu) "object Obj { def a(x:Int)=1 }";
   test_string Parser.main2 (Ast.show_cu) "object Obj { def a(x:Int,y:Int)=1 }";
   test_string Parser.main2 (Ast.show_cu) "object Obj { def a(x:Int,y:Int):Int=1 }";
+  test_string Parser.main2 (Ast.show_cu) "object Obj { def a(x:Int,y:Int)(b:Int):Int=1 }";
+  test_string Parser.main2 (Ast.show_cu) "object Obj { def a(implicit b:Int):Int=1 }";
+  (*
   test_string Parser.main2 (Ast.show_cu) "object Obj { protected def a(x:Int,y:Int):Int=1 }";
+  test_string Parser.main2 (Ast.show_cu) "object Obj {type A = String}";
+  test_string Parser.main2 (Ast.show_cu) "object Obj {var a,b,c:Int= _}";
   test_string Parser.main2 (Ast.show_cu) "object Obj extends A";
   test_string Parser.main2 (Ast.show_cu) "object Obj extends A(1)";
   test_string Parser.main2 (Ast.show_cu) "trait Tra { val i:Int }";
   test_string Parser.main2 (Ast.show_cu) "trait Tra { def a():Int = 1}";
   test_string Parser.main2 (Ast.show_cu) "trait Tra extends { def a():Int = 1 }";
   test_string Parser.main2 (Ast.show_cu) "trait Tra extends TraParent";
-  test_string Parser.main2 (Ast.show_cu) "trait Tra extends TraParent with B { def a():Int = 1}";
+  test_string Parser.main2 (Ast.show_cu) "trait Tra extends TraParent with B { def a():Int = 1}";*)
   (*
   test_string Parser.main2 (Ast.show_cu) "package Abc; object Obj {  }";
   test_string Parser.main2 (Ast.show_cu) "package Abc {  } ";

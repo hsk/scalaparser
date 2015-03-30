@@ -75,10 +75,18 @@ open Ast
 %token TRAIT /* "trait" */
 %token EXTENDS /* "extends" */
 %token PACKAGE /* "package" */
-%token XML /* */
+%token <Ast.xml> XML /* */
 %token XMLPATTERN /* */
 %token QQUOTE /* "`" */
 %token EOF
+
+%token <string*(Ast.e*Ast.e)list> XML_START
+%token <string> XML_STOP
+%token <string*(Ast.e*Ast.e)list> XML_SINGLE
+%token <string> XML_STR
+%token <string> XML_COMMENT
+%token <string> XML_CDATA
+%token <Ast.e> XML_EXP
 
 %nonassoc RPAREN
 %nonassoc ELSE
@@ -90,6 +98,12 @@ open Ast
 
 %type <Ast.cu> main2
 %start main2
+
+%start xmlTag
+%type <Ast.xml> xmlTag
+
+%start expr_rparen
+%type <Ast.e> expr_rparen
 
 %%
 
@@ -176,8 +190,8 @@ with_annotType    : | WITH annotType { $2 }
 annotType         : | simpleType annotation* { Printf.printf "annotType %s\n" (show_e $1);$1 }
 simpleType        : | simpleType typeArgs { $1 }
                     | simpleType SHARP id { EBin($1, "#", EId $3) }
-                    | stableId { Printf.printf "simpleType\n"; $1 }
-                    | path DOT TYPE { Printf.printf "simpleType\n"; EGet($1, "type") }
+                    | stableId { $1 }
+                    | path DOT TYPE { EGet($1, "type") }
                     | LPAREN paramtypes RPAREN { EBlock $2 }
 typeArgs          : | LBRACK types RBRACK { $2 }
 types             : | type1 comma_type* { $1::$2 }
@@ -274,11 +288,11 @@ simpleExpr1       : | literal { $1 }
                     | path { $1 }
                     | UBAR { EId "_" }
                     | LPAREN exprs? RPAREN ARROW expr { EFun([match $2 with | None -> [] | Some xs -> List.map(fun x->(x,EUnit))xs],EUnit,$5) }
-                    | LPAREN exprs? RPAREN { Printf.printf "simp1\n"; match $2 with | None -> EUnit | Some [x] -> x | Some xs -> ETuple xs }
+                    | LPAREN exprs? RPAREN { match $2 with | None -> EUnit | Some [x] -> x | Some xs -> ETuple xs }
                     | simpleExpr DOT id { EGet($1, $3) }
                     | simpleExpr typeArgs { EType($1,$2) }
                     | simpleExpr1 argumentExprs { ECall($1,$2) }
-                    | xmlExpr { EId "" }
+                    | xmlExpr { $1 }
 
 exprs             : | expr comma_expr* { $1::$2 }
 comma_expr        : | COMMA expr { $2 }
@@ -316,9 +330,8 @@ generator         : | pattern1 GARROW expr generator_v* { "generator" }
 generator_v       : | semi? guard { "" }
                     | semi pattern1 EQ expr { "" }
 caseClauses       : | caseClause+ { $1 }
-caseClause        : | CASE pattern ARROW block { ($2, $4) }
-                    /*| CASE pattern guard ARROW block { "" }*/
-guard             : | IF postfixExpr { "" }
+caseClause        : | CASE pattern guard? ARROW block { ($2, $3, $5) }
+guard             : | IF postfixExpr { $2 }
 
 pattern           : | pattern1 { "" }
                     | pattern1 or_pattern1+ { "" }
@@ -360,7 +373,7 @@ add_or_sub        : | ADD { "+" }
                     | SUB { "-" }
 
 typeParam         : | id_or_ubar typeParamClause? rcolon_type? lcolon_type? 
-                       lmod_type* colon_type* { "" }
+                      lmod_type* colon_type* { "" }
 id_or_ubar        : | id { EId $1 }
                     | UBAR { EUnit }
 rcolon_type       : | RCOLON type1 { "" }
@@ -368,10 +381,8 @@ lcolon_type       : | LCOLON type1 { "" }
 lmod_type         : | LMOD type1 { "" }
 colon_type        : | COLON type1 { $2 }
 
-
-paramClauses      : | paramClause* { "" }/*
-                    | paramClause* NL? LPAREN IMPLICIT params RPAREN { "" }*/
-paramClause       : | NL? LPAREN params? RPAREN { "" }
+paramClauses      : | paramClause* { "params2" }
+paramClause       : | NL? LPAREN IMPLICIT? params? RPAREN { "" }
 params            : | param comma_param* { "" }
 comma_param       : | COMMA param { "" }
 param             : | annotation* id coron_paramType? eq_expr? { "" }
@@ -381,9 +392,8 @@ paramType         : | type1 { $1 }
                     | ARROW type1 { EArrow $2 }
                     | type1 MUL { EListPrm $1 }
 
-classParamClauses : | classParamClause* { $1 }/*
-                    | classParamClause* NL? LPAREN IMPLICIT classParams RPAREN { "" }*/
-classParamClause  : | NL? LPAREN classParams? RPAREN { match $3 with None -> [] | Some x -> x }
+classParamClauses : | classParamClause* { $1 }
+classParamClause  : | NL? LPAREN IMPLICIT? classParams? RPAREN { match $4 with None -> [] | Some x -> x }
 classParams       : | classParam comma_classParam* { $1::$2 }
 comma_classParam  : | COMMA classParam { $2 }
 classParam        : | annotation* modifier* val_or_var? id COLON paramType eq_expr? {
@@ -391,7 +401,6 @@ classParam        : | annotation* modifier* val_or_var? id COLON paramType eq_ex
                       }
 val_or_var        : | VAL { false }
                     | VAR { true }
-                
 
 modifier          : | localModifier { $1 }
                     | accessModifier { $1 }
@@ -417,10 +426,12 @@ templateBody      : | nl? LBRACE                        templateStat1? semi_temp
 semi_templateStat : | semi templateStat { $2 }
 templateStat1     : | import { TMSImport $1 }
                     | annotation_nl* modifier* def { TMSDef ($1,$2,$3) }
+                    | annotation_nl* modifier* tmplDef { TMSDef ($1,$2,"") }
                     | annotation_nl* modifier* dcl { TMSDcl ($1,$2,$3) }
                     | expr1 { TMSExpr $1 }
 templateStat      : | import { TMSImport $1 }
                     | annotation_nl* modifier* def { TMSDef ($1,$2,$3) }
+                    | annotation_nl* modifier* tmplDef { TMSDef ($1,$2,"") }
                     | annotation_nl* modifier* dcl { TMSDcl ($1,$2,$3) }
                     | expr { TMSExpr $1 }
 annotation_nl     : | annotation NL? { $1 }
@@ -448,7 +459,7 @@ valDcl            : | ids COLON type1 { "" }
 varDcl            : | ids COLON type1 { "" }
 
 funDcl            : | funSig colon_type? { "" }
-funSig            : | id funTypeParamClause? paramClauses { "" }
+funSig            : | id funTypeParamClause? paramClauses { $3 }
 
 typeDcl           : | id typeParamClause? lcolon_type? rcolon_type? { "" }
 
@@ -456,13 +467,12 @@ patVarDef         : | VAL patDef { "" }
                     | VAR varDef { "" }
 def               : | patVarDef { "" }
                     | DEF funDef { "" }
-                    /*| TYPE NL* typeDef { "" }
-                    | tmplDef { "" }*/
+                    | TYPE NL* typeDef { "" }
 patDef            : | pattern2 comma_pattern2* colon_type? EQ expr { "" }
 comma_pattern2    : | COMMA pattern2 { "" }
-varDef            : | patDef { "" }/*
-                    | ids COLON type1 EQ UBAR { "" }*/
-funDef            : | funSig colon_type? EQ expr { "" }
+varDef            : | patDef { "" }
+                    | ids COLON type1 EQ UBAR { "" }
+funDef            : | funSig colon_type? EQ expr { $1 }
                     | funSig NL? LBRACE block RBRACE { "" }
                     | THIS paramClause paramClauses EQ constrExpr { "" }
                     | THIS paramClause paramClauses NL? constrBlock { "" }
@@ -511,8 +521,25 @@ packageObject     : | PACKAGE OBJECT objectDef { PackageObject($3) }
 compilationUnit   : | PACKAGE qualId semi compilationUnit { match $4 with | ("", ts) -> ($2,ts) | (p, ts) -> ($2^"."^p, ts) }
                     | topStatSeq { ("", $1) }
                     
+/* xml */
+expr_rparen       : | expr RBRACE { $1 }
 
-xmlExpr           : | XML { "" }
+xmlExpr           : | XML { EXml $1 }
+xmlTag            : | XML_START xmlValues XML_STOP {
+                        let (a, ls) = $1 in
+                        if a <> $3 then failwith "end tag error";
+                        XmlTag(a, ls, $2)
+                      }
+                    | XML_SINGLE { XmlSingle $1 }
+xmlValues         : | { [] }
+                    | xmlValue xmlValues { $1::$2 }
+xmlValue          : | xmlTag { $1 }
+                    | XML_STR { XmlText $1 }
+                    | XML_COMMENT { XmlComment $1 }
+                    | XML_CDATA { XmlCData $1 }
+                    | XML_EXP { XmlExp $1 }
 xmlPattern        : | XMLPATTERN { "" }
+
+
 
 main2              : | compilationUnit EOF { $1 }
