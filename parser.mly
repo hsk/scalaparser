@@ -62,7 +62,9 @@ open Ast
 %token LCOLON /* "<:" */
 %token RCOLON /* ">:" */
 %token LMOD /* LMOD */
-
+%token LT /* < */
+%token SLASH_GT /* /> */
+%token GT /* > */
 %token OVERRIDE /* OVERRIDE */
 %token ABSTRACT /* "abstract" */
 %token FINAL /* "final" */
@@ -105,6 +107,10 @@ open Ast
 %start expr_rparen
 %type <Ast.e> expr_rparen
 
+
+%start xmlStart
+%type <string*Ast.xml list> xmlStart
+
 %%
 
 
@@ -131,7 +137,7 @@ plainid           : | PLAINID { $1 }
                     | TILDA { "~" }
                     | NOT   { "!" }
                     | DOT   { "." }
-                    /*| COMMA { "," }*/
+                    /*| COMMAi { "," }*/
                     | OR    { "|" }
 
 
@@ -185,6 +191,9 @@ infixType         : | compoundType { $1 }
 id_nl_compoundType
                   : | id_nl compoundType { $2 }
 id_nl             : | id NL? { $1 }
+                    | LT NL? { "<" }
+                    | SLASH_GT NL? { "/>" }
+                    | GT NL? { ">" }
 compoundType      : | annotType with_annotType* refinement? { $1::$2 }
 with_annotType    : | WITH annotType { $2 }
 annotType         : | simpleType annotation* { Printf.printf "annotType %s\n" (show_e $1);$1 }
@@ -524,7 +533,12 @@ compilationUnit   : | PACKAGE qualId semi compilationUnit { match $4 with | ("",
 /* xml */
 expr_rparen       : | expr RBRACE { $1 }
 
-xmlExpr           : | XML { EXml $1 }
+xmlStart          : | xmlValues XML_STOP { Printf.printf "xmlStart %s\n" $2; ($2, $1) }
+xmlExpr           : | xmllt id XML
+                      { EXml $3 }
+                    | xmllt id XML_SINGLE
+                      { Ast.xml_mode := false; Printf.printf "single\n"; let (_,ls) = $3 in EXml (XmlSingle ($2,ls)) }
+xmllt             : | LT { Printf.printf "xmllt\n"; Ast.xml_mode := true }
 xmlTag            : | XML_START xmlValues XML_STOP {
                         let (a, ls) = $1 in
                         if a <> $3 then failwith "end tag error";

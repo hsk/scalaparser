@@ -167,12 +167,22 @@ let () =
   test Parser.main Ast.show_e "new A(1,2)" "(Ast.ENew Ast.ECall ((Ast.EId \"A\"), [(Ast.EInt 1L); (Ast.EInt 2L)]))";
 
 
-  test Parser.main Ast.show_e "<a></a>" "(Ast.EXml (Ast.XmlTag (\"a\", [], [])))";
   test Parser.main Ast.show_e "<a/>" "(Ast.EXml (Ast.XmlSingle (\"a\", [])))";
+  test Parser.main Ast.show_e "<a a=\"1\"/>" "(Ast.EXml (Ast.XmlSingle (\"a\", [((Ast.EString \"a\"), (Ast.EString \"1\"))])))";
+  test Parser.main Ast.show_e "<a a=\"1\" />" "(Ast.EXml (Ast.XmlSingle (\"a\", [((Ast.EString \"a\"), (Ast.EString \"1\"))])))";
+  test Parser.main Ast.show_e "<a a=\"1\" /><2" "Ast.EBin (\n  (Ast.EXml (Ast.XmlSingle (\"a\", [((Ast.EString \"a\"), (Ast.EString \"1\"))]))),\n  \"<\", (Ast.EInt 2L))";
+
+  test Parser.main Ast.show_e "<bbb></bbb>" "(Ast.EXml (Ast.XmlTag (\"bbb\", [], [])))";
+
+
   test Parser.main Ast.show_e "<a>{\"a\"}</a>" "(Ast.EXml (Ast.XmlTag (\"a\", [], [(Ast.XmlExp (Ast.EString \"\\\"a\\\"\"))])))";
   test Parser.main Ast.show_e "<a k=\"abc\">{\"a\"}</a>" "(Ast.EXml\n   (Ast.XmlTag\n      (\"a\", [((Ast.EString \"k\"), (Ast.EString \"abc\"))],\n       [(Ast.XmlExp (Ast.EString \"\\\"a\\\"\"))])))";
   test Parser.main Ast.show_e "<a {\"a\"}=\"abc\"></a>" "(Ast.EXml\n   (Ast.XmlTag (\"a\", [((Ast.EString \"\\\"a\\\"\"), (Ast.EString \"abc\"))], [])))";
   test Parser.main Ast.show_e "<a {\"a\"}={\"abc\"}></a>" "(Ast.EXml\n   (Ast.XmlTag (\"a\", [((Ast.EString \"\\\"a\\\"\"), (Ast.EString \"\\\"abc\\\"\"))], [])))";
+  test Parser.main Ast.show_e "<bbb><a/></bbb>" "(Ast.EXml (Ast.XmlTag (\"bbb\", [], [(Ast.XmlSingle (\"a\", []))])))";
+
+  test Parser.main Ast.show_e "a < 10" "Ast.EBin ((Ast.EId \"a\"), \"<\", (Ast.EInt 10L))";
+  test Parser.main Ast.show_e "a <b" "Ast.EBin ((Ast.EId \"a\"), \"<\", (Ast.EId \"b\"))";
 
   test_string Parser.main2 (Ast.show_cu) "class A(a:Int)";
   test_string Parser.main2 (Ast.show_cu) "class A(a:Int,b:Int)";
