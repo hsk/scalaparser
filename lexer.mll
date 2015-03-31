@@ -208,48 +208,16 @@ rule token = parse
         end
       else SLASH_GT
     }
-  | ">"
+  | ">" op* as s
     {
       if !Ast.xml_mode then
         begin
+          lexbuf.Lexing.lex_curr_pos <- lexbuf.Lexing.lex_curr_pos - (String.length s) + 1;
           let (name,ls) = Parser.xmlStart xml_token lexbuf in
           Ast.xml_mode := false;
           XML (Ast.XmlTag (name,[], ls))
         end
-      else GT
-    }
-  | "><"
-    { 
-      if !Ast.xml_mode then
-        begin
-          lexbuf.Lexing.lex_curr_pos <- lexbuf.Lexing.lex_curr_pos - 1;
-          let (name,ls) = Parser.xmlStart xml_token lexbuf in
-          Ast.xml_mode := false;
-          XML (Ast.XmlTag (name,[], ls))
-        end
-      else OP "><"
-    }
-  | "></"
-    {
-      if !Ast.xml_mode then
-        begin
-          lexbuf.Lexing.lex_curr_pos <- lexbuf.Lexing.lex_curr_pos - 2;
-          let (name,ls) = Parser.xmlStart xml_token lexbuf in
-          Ast.xml_mode := false;
-          XML (Ast.XmlTag (name,[], ls))
-        end
-      else OP "></"
-    }
-  | "><!--"
-    {
-      if !Ast.xml_mode then
-        begin
-          lexbuf.Lexing.lex_curr_pos <- lexbuf.Lexing.lex_curr_pos - 4;
-          let (name,ls) = Parser.xmlStart xml_token lexbuf in
-          Ast.xml_mode := false;
-          XML (Ast.XmlTag (name,[], ls))
-        end
-      else OP "><!--"
+      else OP s
     }
 
   | "/*" { comment lexbuf }
@@ -362,7 +330,7 @@ rule token = parse
   | '.' { DOT }
   | ',' { COMMA }
   | '|' { OR }
-  | '<' { Printf.printf "lt xmlmode=%b\n" !Ast.xml_mode; LT }
+  | '<' { LT }
   | valid as a
     {
       if !Ast.xml_mode then
@@ -429,14 +397,14 @@ and xml_attributes = parse
     {
       let a = Parser.expr_rparen token lexbuf in
       let s = xml_eq_value lexbuf in
-      let l,r = xml_attributes lexbuf in
-      ((a,s)::l, r)
+      let l, r = xml_attributes lexbuf in
+      ((a, s)::l, r)
     }
   | (identchar+ as a)
     {
       let s = xml_eq_value lexbuf in
-      let l,r = xml_attributes lexbuf in
-      ((Ast.EString a,s)::l, r)
+      let l, r = xml_attributes lexbuf in
+      ((Ast.EString a, s)::l, r)
     }
 
 and xml_eq_value = parse

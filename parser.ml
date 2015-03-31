@@ -7830,7 +7830,7 @@ and _menhir_goto_compilationUnit : _menhir_env -> 'ttv_tail -> _menhir_state -> 
       (Ast.cu)
 # 7832 "parser.ml"
             ) = 
-# 559 "parser.mly"
+# 558 "parser.mly"
                                            ( _1 )
 # 7836 "parser.ml"
              in
@@ -13207,7 +13207,7 @@ and _menhir_goto_xmlExpr : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_xmlE
         let (_menhir_s : _menhir_state) = _menhir_s in
         let (_ : 'tv_xmlExpr) = _v in
         ((let _v : 'tv_xmlPattern = 
-# 555 "parser.mly"
+# 554 "parser.mly"
                               ( "" )
 # 13213 "parser.ml"
          in
@@ -15331,7 +15331,7 @@ and _menhir_reduce444 : _menhir_env -> ('ttv_tail * _menhir_state * (
       (Ast.xml)
 # 15333 "parser.ml"
     ) = 
-# 542 "parser.mly"
+# 541 "parser.mly"
                                                    (
                         let (a, ls) = _1 in
                         if a <> _3 then failwith "end tag error";
@@ -15856,8 +15856,8 @@ and _menhir_goto_id : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_id -> 'tt
             )) = _v in
             ((let ((_menhir_stack, _menhir_s, _), _, _) = _menhir_stack in
             let _v : 'tv_xmlExpr = 
-# 538 "parser.mly"
-                      ( EXml _3 )
+# 537 "parser.mly"
+                                   ( EXml _3 )
 # 15862 "parser.ml"
              in
             _menhir_goto_xmlExpr _menhir_env _menhir_stack _menhir_s _v) : 'freshtv840)) : 'freshtv842)
@@ -15879,8 +15879,8 @@ and _menhir_goto_id : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_id -> 'tt
             )) = _v in
             ((let ((_menhir_stack, _menhir_s, _), _, _2) = _menhir_stack in
             let _v : 'tv_xmlExpr = 
-# 540 "parser.mly"
-                      ( Ast.xml_mode := false; Printf.printf "single\n"; let (_,ls) = _3 in EXml (XmlSingle (_2,ls)) )
+# 539 "parser.mly"
+                      ( let (_,ls) = _3 in EXml (XmlSingle (_2,ls)) )
 # 15885 "parser.ml"
              in
             _menhir_goto_xmlExpr _menhir_env _menhir_stack _menhir_s _v) : 'freshtv844)) : 'freshtv846)
@@ -17047,7 +17047,7 @@ and _menhir_goto_xmlValues : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_xm
         let (_menhir_stack : ('freshtv707 * _menhir_state * 'tv_xmlValue) * _menhir_state * 'tv_xmlValues) = Obj.magic _menhir_stack in
         ((let ((_menhir_stack, _menhir_s, _1), _, _2) = _menhir_stack in
         let _v : 'tv_xmlValues = 
-# 549 "parser.mly"
+# 548 "parser.mly"
                                          ( _1::_2 )
 # 17053 "parser.ml"
          in
@@ -17080,7 +17080,7 @@ and _menhir_goto_xmlValues : _menhir_env -> 'ttv_tail -> _menhir_state -> 'tv_xm
 # 17081 "parser.ml"
             ) = 
 # 536 "parser.mly"
-                                         ( Printf.printf "xmlStart %s\n" _2; (_2, _1) )
+                                         ( (_2, _1) )
 # 17085 "parser.ml"
              in
             let (_menhir_env : _menhir_env) = _menhir_env in
@@ -17204,7 +17204,7 @@ and _menhir_goto_xmlTag : _menhir_env -> 'ttv_tail -> _menhir_state -> (
 # 17205 "parser.ml"
         )) = _v in
         ((let _v : 'tv_xmlValue = 
-# 550 "parser.mly"
+# 549 "parser.mly"
                              ( _1 )
 # 17210 "parser.ml"
          in
@@ -18266,8 +18266,8 @@ and _menhir_run118 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
     let (_menhir_stack : 'freshtv649) = Obj.magic _menhir_stack in
     let (_menhir_s : _menhir_state) = _menhir_s in
     ((let _v : 'tv_xmllt = 
-# 541 "parser.mly"
-                         ( Printf.printf "xmllt\n"; Ast.xml_mode := true )
+# 540 "parser.mly"
+                         ( Ast.xml_mode := true )
 # 18272 "parser.ml"
      in
     let (_menhir_env : _menhir_env) = _menhir_env in
@@ -20590,7 +20590,7 @@ and _menhir_errorcase : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return
 and _menhir_reduce451 : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s ->
     let _v : 'tv_xmlValues = 
-# 548 "parser.mly"
+# 547 "parser.mly"
                       ( [] )
 # 20596 "parser.ml"
      in
@@ -20612,7 +20612,7 @@ and _menhir_run746 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
 # 20613 "parser.ml"
     )) = _v in
     ((let _v : 'tv_xmlValue = 
-# 551 "parser.mly"
+# 550 "parser.mly"
                               ( XmlText _1 )
 # 20618 "parser.ml"
      in
@@ -20672,7 +20672,7 @@ and _menhir_run749 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
 # 20673 "parser.ml"
     )) = _v in
     ((let _v : 'tv_xmlValue = 
-# 554 "parser.mly"
+# 553 "parser.mly"
                               ( XmlExp _1 )
 # 20678 "parser.ml"
      in
@@ -20694,7 +20694,7 @@ and _menhir_run750 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
 # 20695 "parser.ml"
     )) = _v in
     ((let _v : 'tv_xmlValue = 
-# 552 "parser.mly"
+# 551 "parser.mly"
                                   ( XmlComment _1 )
 # 20700 "parser.ml"
      in
@@ -20716,7 +20716,7 @@ and _menhir_run751 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
 # 20717 "parser.ml"
     )) = _v in
     ((let _v : 'tv_xmlValue = 
-# 553 "parser.mly"
+# 552 "parser.mly"
                                 ( XmlCData _1 )
 # 20722 "parser.ml"
      in
@@ -20733,7 +20733,7 @@ and _menhir_reduce445 : _menhir_env -> 'ttv_tail -> _menhir_state -> (
       (Ast.xml)
 # 20735 "parser.ml"
     ) = 
-# 547 "parser.mly"
+# 546 "parser.mly"
                                  ( XmlSingle _1 )
 # 20739 "parser.ml"
      in

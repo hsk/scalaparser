@@ -533,12 +533,11 @@ compilationUnit   : | PACKAGE qualId semi compilationUnit { match $4 with | ("",
 /* xml */
 expr_rparen       : | expr RBRACE { $1 }
 
-xmlStart          : | xmlValues XML_STOP { Printf.printf "xmlStart %s\n" $2; ($2, $1) }
-xmlExpr           : | xmllt id XML
-                      { EXml $3 }
+xmlStart          : | xmlValues XML_STOP { ($2, $1) }
+xmlExpr           : | xmllt id XML { EXml $3 }
                     | xmllt id XML_SINGLE
-                      { Ast.xml_mode := false; Printf.printf "single\n"; let (_,ls) = $3 in EXml (XmlSingle ($2,ls)) }
-xmllt             : | LT { Printf.printf "xmllt\n"; Ast.xml_mode := true }
+                      { let (_,ls) = $3 in EXml (XmlSingle ($2,ls)) }
+xmllt             : | LT { Ast.xml_mode := true }
 xmlTag            : | XML_START xmlValues XML_STOP {
                         let (a, ls) = $1 in
                         if a <> $3 then failwith "end tag error";
