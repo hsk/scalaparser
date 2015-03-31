@@ -359,9 +359,9 @@ simplePattern     : | UBAR { "" }
                     | literal { "" }
                     | stableId { "" }
                     | stableId LPAREN patterns_u RPAREN { "" }
-                    | LPAREN patterns? RPAREN { "" }/*
+                    | LPAREN patterns? RPAREN { "" }
                     | xmlPattern { "" }
-                    */
+                    
 patterns_u        : | pattern { "" }
                     | pattern COMMA patterns_u { "" }
                     | valid_at? UBAR MUL { "" }
@@ -552,7 +552,7 @@ xmlValue          : | xmlTag { $1 }
                     | XML_COMMENT { XmlComment $1 }
                     | XML_CDATA { XmlCData $1 }
                     | XML_EXP { XmlExp $1 }
-xmlPattern        : | XMLPATTERN { "" }
+xmlPattern        : | xmlExpr { "" }
 
 
 

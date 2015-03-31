@@ -184,6 +184,11 @@ let () =
   test Parser.main Ast.show_e "a < 10" "Ast.EBin ((Ast.EId \"a\"), \"<\", (Ast.EInt 10L))";
   test Parser.main Ast.show_e "a <b" "Ast.EBin ((Ast.EId \"a\"), \"<\", (Ast.EId \"b\"))";
 
+  test Parser.main Ast.show_e "a match {case <a></a> => 1}" "Ast.EMatch ((Ast.EId \"a\"), [(\"\", None, [(Ast.EInt 1L)])])";
+  test Parser.main Ast.show_e "a match {case <a/> => 1}" "Ast.EMatch ((Ast.EId \"a\"), [(\"\", None, [(Ast.EInt 1L)])])";
+  test Parser.main Ast.show_e "a match {case <a /> => 1}" "Ast.EMatch ((Ast.EId \"a\"), [(\"\", None, [(Ast.EInt 1L)])])";
+  test Parser.main Ast.show_e "a match {case <a a=\"a\"/> => 1}" "Ast.EMatch ((Ast.EId \"a\"), [(\"\", None, [(Ast.EInt 1L)])])";
+
   test_string Parser.main2 (Ast.show_cu) "class A(a:Int)";
   test_string Parser.main2 (Ast.show_cu) "class A(a:Int,b:Int)";
   test_string Parser.main2 (Ast.show_cu) "case class A(a:Int)";

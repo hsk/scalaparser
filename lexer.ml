@@ -5973,18 +5973,27 @@ and __ocaml_lex_token_rec lexbuf __ocaml_lex_state =
           let (name,ls) = Parser.xmlStart xml_token lexbuf in
           Ast.xml_mode := false;
           XML (Ast.XmlTag (name,l, ls))
-        | l,true -> XML_SINGLE("", l)
+        | l,true ->
+          Ast.xml_mode := false;
+          XML_SINGLE("", l)
       end else token lexbuf
     )
-# 5980 "lexer.ml"
+# 5982 "lexer.ml"
 
   | 1 ->
-# 200 "lexer.mll"
-         ( if !Ast.xml_mode then XML_SINGLE("", []) else SLASH_GT )
-# 5985 "lexer.ml"
+# 203 "lexer.mll"
+    (
+      if !Ast.xml_mode then
+        begin
+          Ast.xml_mode := false;
+          XML_SINGLE("", [])
+        end
+      else SLASH_GT
+    )
+# 5994 "lexer.ml"
 
   | 2 ->
-# 202 "lexer.mll"
+# 212 "lexer.mll"
     (
       if !Ast.xml_mode then
         begin
@@ -5994,10 +6003,10 @@ and __ocaml_lex_token_rec lexbuf __ocaml_lex_state =
         end
       else GT
     )
-# 5998 "lexer.ml"
+# 6007 "lexer.ml"
 
   | 3 ->
-# 212 "lexer.mll"
+# 222 "lexer.mll"
     ( 
       if !Ast.xml_mode then
         begin
@@ -6008,10 +6017,10 @@ and __ocaml_lex_token_rec lexbuf __ocaml_lex_state =
         end
       else OP "><"
     )
-# 6012 "lexer.ml"
+# 6021 "lexer.ml"
 
   | 4 ->
-# 223 "lexer.mll"
+# 233 "lexer.mll"
     (
       if !Ast.xml_mode then
         begin
@@ -6022,10 +6031,10 @@ and __ocaml_lex_token_rec lexbuf __ocaml_lex_state =
         end
       else OP "></"
     )
-# 6026 "lexer.ml"
+# 6035 "lexer.ml"
 
   | 5 ->
-# 234 "lexer.mll"
+# 244 "lexer.mll"
     (
       if !Ast.xml_mode then
         begin
@@ -6036,415 +6045,415 @@ and __ocaml_lex_token_rec lexbuf __ocaml_lex_state =
         end
       else OP "><!--"
     )
-# 6040 "lexer.ml"
+# 6049 "lexer.ml"
 
   | 6 ->
-# 245 "lexer.mll"
+# 255 "lexer.mll"
          ( comment lexbuf )
-# 6045 "lexer.ml"
+# 6054 "lexer.ml"
 
   | 7 ->
-# 246 "lexer.mll"
+# 256 "lexer.mll"
                ( token lexbuf )
-# 6050 "lexer.ml"
+# 6059 "lexer.ml"
 
   | 8 ->
 let
-# 247 "lexer.mll"
+# 257 "lexer.mll"
                       s
-# 6056 "lexer.ml"
+# 6065 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 247 "lexer.mll"
+# 257 "lexer.mll"
                         ( IntegerLiteral(Int64.of_string s) )
-# 6060 "lexer.ml"
+# 6069 "lexer.ml"
 
   | 9 ->
 let
-# 248 "lexer.mll"
+# 258 "lexer.mll"
                                 s
-# 6066 "lexer.ml"
+# 6075 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 248 "lexer.mll"
+# 258 "lexer.mll"
                                   ( IntegerLiteral(Int64.of_string (String.sub s 0 ((String.length s) - 1))) )
-# 6070 "lexer.ml"
+# 6079 "lexer.ml"
 
   | 10 ->
 let
-# 249 "lexer.mll"
+# 259 "lexer.mll"
                             s
-# 6076 "lexer.ml"
+# 6085 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 249 "lexer.mll"
+# 259 "lexer.mll"
                               ( IntegerLiteral(Int64.of_string s) )
-# 6080 "lexer.ml"
+# 6089 "lexer.ml"
 
   | 11 ->
 let
-# 250 "lexer.mll"
+# 260 "lexer.mll"
                                                   s
-# 6086 "lexer.ml"
+# 6095 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 250 "lexer.mll"
+# 260 "lexer.mll"
                                                     ( FloatingPointLiteral(float_of_string s) )
-# 6090 "lexer.ml"
+# 6099 "lexer.ml"
 
   | 12 ->
 let
-# 251 "lexer.mll"
+# 261 "lexer.mll"
                                            s
-# 6096 "lexer.ml"
+# 6105 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 251 "lexer.mll"
+# 261 "lexer.mll"
                                              ( FloatingPointLiteral(float_of_string s) )
-# 6100 "lexer.ml"
+# 6109 "lexer.ml"
 
   | 13 ->
 let
-# 252 "lexer.mll"
+# 262 "lexer.mll"
                                       s
-# 6106 "lexer.ml"
+# 6115 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 252 "lexer.mll"
+# 262 "lexer.mll"
                                         ( FloatingPointLiteral(float_of_string s) )
-# 6110 "lexer.ml"
+# 6119 "lexer.ml"
 
   | 14 ->
 let
-# 253 "lexer.mll"
+# 263 "lexer.mll"
                                       s
-# 6116 "lexer.ml"
+# 6125 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 253 "lexer.mll"
+# 263 "lexer.mll"
                                         ( FloatingPointLiteral(float_of_string s) )
-# 6120 "lexer.ml"
+# 6129 "lexer.ml"
 
   | 15 ->
 let
-# 255 "lexer.mll"
+# 265 "lexer.mll"
                                    s
-# 6126 "lexer.ml"
+# 6135 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 255 "lexer.mll"
+# 265 "lexer.mll"
                                      ( SymbolLiteral(s) )
-# 6130 "lexer.ml"
+# 6139 "lexer.ml"
 
   | 16 ->
 let
-# 256 "lexer.mll"
+# 266 "lexer.mll"
                                                  s
-# 6136 "lexer.ml"
+# 6145 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 256 "lexer.mll"
+# 266 "lexer.mll"
                                                    ( CharacterLiteral(String.get s 1) )
-# 6140 "lexer.ml"
+# 6149 "lexer.ml"
 
   | 17 ->
 let
-# 257 "lexer.mll"
+# 267 "lexer.mll"
                               s
-# 6146 "lexer.ml"
+# 6155 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 257 "lexer.mll"
+# 267 "lexer.mll"
                                 ( StringLiteral(s) )
-# 6150 "lexer.ml"
+# 6159 "lexer.ml"
 
   | 18 ->
 let
-# 258 "lexer.mll"
+# 268 "lexer.mll"
                                         s
-# 6156 "lexer.ml"
+# 6165 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 258 "lexer.mll"
+# 268 "lexer.mll"
                                           ( StringLiteral(s) )
-# 6160 "lexer.ml"
+# 6169 "lexer.ml"
 
   | 19 ->
-# 259 "lexer.mll"
+# 269 "lexer.mll"
        ( NL )
-# 6165 "lexer.ml"
+# 6174 "lexer.ml"
 
   | 20 ->
-# 260 "lexer.mll"
+# 270 "lexer.mll"
         ( SEMI )
-# 6170 "lexer.ml"
+# 6179 "lexer.ml"
 
   | 21 ->
-# 262 "lexer.mll"
+# 272 "lexer.mll"
                ( ABSTRACT )
-# 6175 "lexer.ml"
+# 6184 "lexer.ml"
 
   | 22 ->
-# 263 "lexer.mll"
+# 273 "lexer.mll"
            ( CASE )
-# 6180 "lexer.ml"
+# 6189 "lexer.ml"
 
   | 23 ->
-# 264 "lexer.mll"
+# 274 "lexer.mll"
             ( CATCH )
-# 6185 "lexer.ml"
+# 6194 "lexer.ml"
 
   | 24 ->
-# 265 "lexer.mll"
+# 275 "lexer.mll"
             ( CLASS )
-# 6190 "lexer.ml"
+# 6199 "lexer.ml"
 
   | 25 ->
-# 266 "lexer.mll"
+# 276 "lexer.mll"
           ( DEF )
-# 6195 "lexer.ml"
+# 6204 "lexer.ml"
 
   | 26 ->
-# 267 "lexer.mll"
+# 277 "lexer.mll"
          ( DO )
-# 6200 "lexer.ml"
+# 6209 "lexer.ml"
 
   | 27 ->
-# 268 "lexer.mll"
+# 278 "lexer.mll"
            ( ELSE )
-# 6205 "lexer.ml"
+# 6214 "lexer.ml"
 
   | 28 ->
-# 269 "lexer.mll"
+# 279 "lexer.mll"
               ( EXTENDS )
-# 6210 "lexer.ml"
+# 6219 "lexer.ml"
 
   | 29 ->
-# 270 "lexer.mll"
+# 280 "lexer.mll"
             ( BooleanLiteral(false) )
-# 6215 "lexer.ml"
+# 6224 "lexer.ml"
 
   | 30 ->
-# 272 "lexer.mll"
+# 282 "lexer.mll"
             ( FINAL )
-# 6220 "lexer.ml"
+# 6229 "lexer.ml"
 
   | 31 ->
-# 273 "lexer.mll"
+# 283 "lexer.mll"
               ( FINALLY )
-# 6225 "lexer.ml"
+# 6234 "lexer.ml"
 
   | 32 ->
-# 274 "lexer.mll"
+# 284 "lexer.mll"
           ( FOR )
-# 6230 "lexer.ml"
+# 6239 "lexer.ml"
 
   | 33 ->
-# 275 "lexer.mll"
+# 285 "lexer.mll"
               ( FOR_SOME )
-# 6235 "lexer.ml"
+# 6244 "lexer.ml"
 
   | 34 ->
-# 277 "lexer.mll"
+# 287 "lexer.mll"
          ( IF )
-# 6240 "lexer.ml"
+# 6249 "lexer.ml"
 
   | 35 ->
-# 278 "lexer.mll"
+# 288 "lexer.mll"
                ( IMPLICIT )
-# 6245 "lexer.ml"
+# 6254 "lexer.ml"
 
   | 36 ->
-# 279 "lexer.mll"
+# 289 "lexer.mll"
              ( IMPORT )
-# 6250 "lexer.ml"
+# 6259 "lexer.ml"
 
   | 37 ->
-# 280 "lexer.mll"
+# 290 "lexer.mll"
            ( LAZY )
-# 6255 "lexer.ml"
+# 6264 "lexer.ml"
 
   | 38 ->
-# 281 "lexer.mll"
+# 291 "lexer.mll"
             ( MATCH )
-# 6260 "lexer.ml"
+# 6269 "lexer.ml"
 
   | 39 ->
-# 282 "lexer.mll"
+# 292 "lexer.mll"
           ( NEW )
-# 6265 "lexer.ml"
+# 6274 "lexer.ml"
 
   | 40 ->
-# 283 "lexer.mll"
+# 293 "lexer.mll"
            ( NULL )
-# 6270 "lexer.ml"
+# 6279 "lexer.ml"
 
   | 41 ->
-# 284 "lexer.mll"
+# 294 "lexer.mll"
              ( OBJECT )
-# 6275 "lexer.ml"
+# 6284 "lexer.ml"
 
   | 42 ->
-# 285 "lexer.mll"
+# 295 "lexer.mll"
                ( OVERRIDE )
-# 6280 "lexer.ml"
+# 6289 "lexer.ml"
 
   | 43 ->
-# 287 "lexer.mll"
+# 297 "lexer.mll"
               ( PACKAGE )
-# 6285 "lexer.ml"
+# 6294 "lexer.ml"
 
   | 44 ->
-# 288 "lexer.mll"
+# 298 "lexer.mll"
               ( PRIVATE )
-# 6290 "lexer.ml"
+# 6299 "lexer.ml"
 
   | 45 ->
-# 289 "lexer.mll"
+# 299 "lexer.mll"
                 ( PROTECTED )
-# 6295 "lexer.ml"
+# 6304 "lexer.ml"
 
   | 46 ->
-# 291 "lexer.mll"
+# 301 "lexer.mll"
              ( RETURN )
-# 6300 "lexer.ml"
+# 6309 "lexer.ml"
 
   | 47 ->
-# 292 "lexer.mll"
+# 302 "lexer.mll"
              ( SEALED )
-# 6305 "lexer.ml"
+# 6314 "lexer.ml"
 
   | 48 ->
-# 293 "lexer.mll"
+# 303 "lexer.mll"
             ( SUPER )
-# 6310 "lexer.ml"
+# 6319 "lexer.ml"
 
   | 49 ->
-# 294 "lexer.mll"
+# 304 "lexer.mll"
            ( THIS )
-# 6315 "lexer.ml"
+# 6324 "lexer.ml"
 
   | 50 ->
-# 296 "lexer.mll"
+# 306 "lexer.mll"
             ( THROW )
-# 6320 "lexer.ml"
+# 6329 "lexer.ml"
 
   | 51 ->
-# 297 "lexer.mll"
+# 307 "lexer.mll"
             ( TRAIT )
-# 6325 "lexer.ml"
+# 6334 "lexer.ml"
 
   | 52 ->
-# 298 "lexer.mll"
+# 308 "lexer.mll"
           ( TRY )
-# 6330 "lexer.ml"
+# 6339 "lexer.ml"
 
   | 53 ->
-# 299 "lexer.mll"
+# 309 "lexer.mll"
            ( BooleanLiteral(true) )
-# 6335 "lexer.ml"
+# 6344 "lexer.ml"
 
   | 54 ->
-# 300 "lexer.mll"
+# 310 "lexer.mll"
            ( TYPE )
-# 6340 "lexer.ml"
+# 6349 "lexer.ml"
 
   | 55 ->
-# 301 "lexer.mll"
+# 311 "lexer.mll"
           ( VAL )
-# 6345 "lexer.ml"
+# 6354 "lexer.ml"
 
   | 56 ->
-# 302 "lexer.mll"
+# 312 "lexer.mll"
           ( VAR )
-# 6350 "lexer.ml"
+# 6359 "lexer.ml"
 
   | 57 ->
-# 303 "lexer.mll"
+# 313 "lexer.mll"
             ( WHILE )
-# 6355 "lexer.ml"
+# 6364 "lexer.ml"
 
   | 58 ->
-# 304 "lexer.mll"
+# 314 "lexer.mll"
            ( WITH )
-# 6360 "lexer.ml"
+# 6369 "lexer.ml"
 
   | 59 ->
-# 305 "lexer.mll"
+# 315 "lexer.mll"
             ( YIELD )
-# 6365 "lexer.ml"
+# 6374 "lexer.ml"
 
   | 60 ->
-# 307 "lexer.mll"
+# 317 "lexer.mll"
         ( UBAR )
-# 6370 "lexer.ml"
+# 6379 "lexer.ml"
 
   | 61 ->
-# 308 "lexer.mll"
+# 318 "lexer.mll"
         ( COLON )
-# 6375 "lexer.ml"
+# 6384 "lexer.ml"
 
   | 62 ->
-# 309 "lexer.mll"
+# 319 "lexer.mll"
         ( EQ )
-# 6380 "lexer.ml"
+# 6389 "lexer.ml"
 
   | 63 ->
-# 310 "lexer.mll"
+# 320 "lexer.mll"
          ( ARROW )
-# 6385 "lexer.ml"
+# 6394 "lexer.ml"
 
   | 64 ->
-# 311 "lexer.mll"
+# 321 "lexer.mll"
           ( ARROW )
-# 6390 "lexer.ml"
+# 6399 "lexer.ml"
 
   | 65 ->
-# 312 "lexer.mll"
+# 322 "lexer.mll"
          ( GARROW )
-# 6395 "lexer.ml"
+# 6404 "lexer.ml"
 
   | 66 ->
-# 313 "lexer.mll"
+# 323 "lexer.mll"
           ( GARROW )
-# 6400 "lexer.ml"
+# 6409 "lexer.ml"
 
   | 67 ->
-# 315 "lexer.mll"
+# 325 "lexer.mll"
          ( LCOLON )
-# 6405 "lexer.ml"
+# 6414 "lexer.ml"
 
   | 68 ->
-# 316 "lexer.mll"
+# 326 "lexer.mll"
          ( LMOD )
-# 6410 "lexer.ml"
+# 6419 "lexer.ml"
 
   | 69 ->
-# 317 "lexer.mll"
+# 327 "lexer.mll"
          ( RCOLON )
-# 6415 "lexer.ml"
+# 6424 "lexer.ml"
 
   | 70 ->
-# 318 "lexer.mll"
+# 328 "lexer.mll"
         ( SHARP )
-# 6420 "lexer.ml"
+# 6429 "lexer.ml"
 
   | 71 ->
-# 319 "lexer.mll"
+# 329 "lexer.mll"
         ( AT )
-# 6425 "lexer.ml"
+# 6434 "lexer.ml"
 
   | 72 ->
-# 321 "lexer.mll"
+# 331 "lexer.mll"
         ( LPAREN )
-# 6430 "lexer.ml"
+# 6439 "lexer.ml"
 
   | 73 ->
-# 322 "lexer.mll"
+# 332 "lexer.mll"
         ( RPAREN )
-# 6435 "lexer.ml"
+# 6444 "lexer.ml"
 
   | 74 ->
-# 323 "lexer.mll"
+# 333 "lexer.mll"
         ( LBRACK )
-# 6440 "lexer.ml"
+# 6449 "lexer.ml"
 
   | 75 ->
-# 324 "lexer.mll"
+# 334 "lexer.mll"
         ( RBRACK )
-# 6445 "lexer.ml"
+# 6454 "lexer.ml"
 
   | 76 ->
-# 326 "lexer.mll"
+# 336 "lexer.mll"
     (
       if !Ast.xml_mode then
         begin
@@ -6457,70 +6466,72 @@ let
             let (name,ls) = Parser.xmlStart xml_token lexbuf in
             Ast.xml_mode := false;
             XML (Ast.XmlTag (name,(a,s)::l, ls))
-          | l,true -> XML_SINGLE("", (a,s)::l)
+          | l,true ->
+            Ast.xml_mode := false;
+            XML_SINGLE("", (a,s)::l)
         end
       else
         LBRACE
     )
-# 6466 "lexer.ml"
+# 6477 "lexer.ml"
 
   | 77 ->
-# 343 "lexer.mll"
+# 355 "lexer.mll"
         ( RBRACE )
-# 6471 "lexer.ml"
+# 6482 "lexer.ml"
 
   | 78 ->
-# 345 "lexer.mll"
+# 357 "lexer.mll"
         ( ADD )
-# 6476 "lexer.ml"
+# 6487 "lexer.ml"
 
   | 79 ->
-# 346 "lexer.mll"
+# 358 "lexer.mll"
         ( SUB )
-# 6481 "lexer.ml"
+# 6492 "lexer.ml"
 
   | 80 ->
-# 347 "lexer.mll"
+# 359 "lexer.mll"
         ( MUL )
-# 6486 "lexer.ml"
+# 6497 "lexer.ml"
 
   | 81 ->
-# 348 "lexer.mll"
+# 360 "lexer.mll"
         ( TILDA )
-# 6491 "lexer.ml"
+# 6502 "lexer.ml"
 
   | 82 ->
-# 349 "lexer.mll"
+# 361 "lexer.mll"
         ( NOT )
-# 6496 "lexer.ml"
+# 6507 "lexer.ml"
 
   | 83 ->
-# 350 "lexer.mll"
+# 362 "lexer.mll"
         ( DOT )
-# 6501 "lexer.ml"
+# 6512 "lexer.ml"
 
   | 84 ->
-# 351 "lexer.mll"
+# 363 "lexer.mll"
         ( COMMA )
-# 6506 "lexer.ml"
+# 6517 "lexer.ml"
 
   | 85 ->
-# 352 "lexer.mll"
+# 364 "lexer.mll"
         ( OR )
-# 6511 "lexer.ml"
+# 6522 "lexer.ml"
 
   | 86 ->
-# 353 "lexer.mll"
+# 365 "lexer.mll"
         ( Printf.printf "lt xmlmode=%b\n" !Ast.xml_mode; LT )
-# 6516 "lexer.ml"
+# 6527 "lexer.ml"
 
   | 87 ->
 let
-# 354 "lexer.mll"
+# 366 "lexer.mll"
              a
-# 6522 "lexer.ml"
+# 6533 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 355 "lexer.mll"
+# 367 "lexer.mll"
     (
       if !Ast.xml_mode then
         begin
@@ -6528,48 +6539,51 @@ let
           match xml_attributes lexbuf with
           | l,false ->
             let (name,ls) = Parser.xmlStart xml_token lexbuf in
+            Ast.xml_mode := false;
             XML (Ast.XmlTag (name, (Ast.EString a,s)::l, ls))
-          | l,true -> XML_SINGLE("", (Ast.EString a,s)::l)
+          | l,true ->
+            Ast.xml_mode := false;
+            XML_SINGLE("", (Ast.EString a,s)::l)
         end
       else
         VALID(a)
     )
-# 6538 "lexer.ml"
+# 6552 "lexer.ml"
 
   | 88 ->
 let
-# 368 "lexer.mll"
+# 383 "lexer.mll"
                s
-# 6544 "lexer.ml"
+# 6558 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 368 "lexer.mll"
+# 383 "lexer.mll"
                  ( PLAINID(s) )
-# 6548 "lexer.ml"
+# 6562 "lexer.ml"
 
   | 89 ->
 let
-# 369 "lexer.mll"
+# 384 "lexer.mll"
           s
-# 6554 "lexer.ml"
+# 6568 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 369 "lexer.mll"
+# 384 "lexer.mll"
             ( OP(s) )
-# 6558 "lexer.ml"
+# 6572 "lexer.ml"
 
   | 90 ->
-# 370 "lexer.mll"
+# 385 "lexer.mll"
         ( EOF )
-# 6563 "lexer.ml"
+# 6577 "lexer.ml"
 
   | 91 ->
-# 372 "lexer.mll"
+# 387 "lexer.mll"
     ( failwith
       (Printf.sprintf "unknown token %s near characters %d-%d"
         (Lexing.lexeme lexbuf)
         (Lexing.lexeme_start lexbuf)
         (Lexing.lexeme_end lexbuf))
     )
-# 6573 "lexer.ml"
+# 6587 "lexer.ml"
 
   | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; 
       __ocaml_lex_token_rec lexbuf __ocaml_lex_state
@@ -6579,29 +6593,29 @@ and import lexbuf =
 and __ocaml_lex_import_rec lexbuf __ocaml_lex_state =
   match Lexing.engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | 0 ->
-# 380 "lexer.mll"
+# 395 "lexer.mll"
                 ( import lexbuf )
-# 6585 "lexer.ml"
+# 6599 "lexer.ml"
 
   | 1 ->
-# 381 "lexer.mll"
+# 396 "lexer.mll"
                                    ( Lexing.lexeme lexbuf )
-# 6590 "lexer.ml"
+# 6604 "lexer.ml"
 
   | 2 ->
-# 382 "lexer.mll"
+# 397 "lexer.mll"
         ( Lexing.lexeme lexbuf )
-# 6595 "lexer.ml"
+# 6609 "lexer.ml"
 
   | 3 ->
-# 384 "lexer.mll"
+# 399 "lexer.mll"
     ( failwith
       (Printf.sprintf "unknown token %s near characters %d-%d"
         (Lexing.lexeme lexbuf)
         (Lexing.lexeme_start lexbuf)
         (Lexing.lexeme_end lexbuf))
     )
-# 6605 "lexer.ml"
+# 6619 "lexer.ml"
 
   | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; 
       __ocaml_lex_import_rec lexbuf __ocaml_lex_state
@@ -6611,14 +6625,14 @@ and comment lexbuf =
 and __ocaml_lex_comment_rec lexbuf __ocaml_lex_state =
   match Lexing.engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | 0 ->
-# 392 "lexer.mll"
+# 407 "lexer.mll"
          ( token lexbuf )
-# 6617 "lexer.ml"
+# 6631 "lexer.ml"
 
   | 1 ->
-# 393 "lexer.mll"
+# 408 "lexer.mll"
       ( comment lexbuf )
-# 6622 "lexer.ml"
+# 6636 "lexer.ml"
 
   | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; 
       __ocaml_lex_comment_rec lexbuf __ocaml_lex_state
@@ -6629,62 +6643,62 @@ and __ocaml_lex_xml_token_rec lexbuf __ocaml_lex_state =
   match Lexing.new_engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | 0 ->
 let
-# 396 "lexer.mll"
+# 411 "lexer.mll"
                                                s
-# 6635 "lexer.ml"
+# 6649 "lexer.ml"
 = Lexing.sub_lexeme lexbuf (lexbuf.Lexing.lex_start_pos + 1) lexbuf.Lexing.lex_mem.(0) in
-# 397 "lexer.mll"
+# 412 "lexer.mll"
     (
       match xml_attributes lexbuf with
       | l,false -> XML_START(s, l)
       | l,true -> XML_SINGLE(s, l)
     )
-# 6643 "lexer.ml"
+# 6657 "lexer.ml"
 
   | 1 ->
 let
-# 402 "lexer.mll"
+# 417 "lexer.mll"
                                                 s
-# 6649 "lexer.ml"
+# 6663 "lexer.ml"
 = Lexing.sub_lexeme lexbuf (lexbuf.Lexing.lex_start_pos + 2) (lexbuf.Lexing.lex_curr_pos + -1) in
-# 402 "lexer.mll"
+# 417 "lexer.mll"
                                                        ( Printf.printf "xmlstop"; XML_STOP s )
-# 6653 "lexer.ml"
+# 6667 "lexer.ml"
 
   | 2 ->
 let
-# 403 "lexer.mll"
+# 418 "lexer.mll"
               s
-# 6659 "lexer.ml"
+# 6673 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos (lexbuf.Lexing.lex_start_pos + 4) in
-# 403 "lexer.mll"
+# 418 "lexer.mll"
                 ( XML_COMMENT (s ^ xml_comment lexbuf) )
-# 6663 "lexer.ml"
+# 6677 "lexer.ml"
 
   | 3 ->
 let
-# 404 "lexer.mll"
+# 419 "lexer.mll"
                    s
-# 6669 "lexer.ml"
+# 6683 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos (lexbuf.Lexing.lex_start_pos + 9) in
-# 404 "lexer.mll"
+# 419 "lexer.mll"
                      ( XML_CDATA (s ^ xml_cdata lexbuf) )
-# 6673 "lexer.ml"
+# 6687 "lexer.ml"
 
   | 4 ->
-# 405 "lexer.mll"
+# 420 "lexer.mll"
         ( EOF )
-# 6678 "lexer.ml"
+# 6692 "lexer.ml"
 
   | 5 ->
-# 406 "lexer.mll"
+# 421 "lexer.mll"
         ( XML_EXP (Parser.expr_rparen token lexbuf))
-# 6683 "lexer.ml"
+# 6697 "lexer.ml"
 
   | 6 ->
-# 407 "lexer.mll"
+# 422 "lexer.mll"
        ( XML_STR (xml_str lexbuf) )
-# 6688 "lexer.ml"
+# 6702 "lexer.ml"
 
   | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; 
       __ocaml_lex_xml_token_rec lexbuf __ocaml_lex_state
@@ -6694,43 +6708,43 @@ and xml_attributes lexbuf =
 and __ocaml_lex_xml_attributes_rec lexbuf __ocaml_lex_state =
   match Lexing.engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | 0 ->
-# 410 "lexer.mll"
+# 425 "lexer.mll"
                 ( xml_attributes lexbuf )
-# 6700 "lexer.ml"
+# 6714 "lexer.ml"
 
   | 1 ->
-# 411 "lexer.mll"
+# 426 "lexer.mll"
         ( [], false )
-# 6705 "lexer.ml"
+# 6719 "lexer.ml"
 
   | 2 ->
-# 412 "lexer.mll"
+# 427 "lexer.mll"
          ( [], true )
-# 6710 "lexer.ml"
+# 6724 "lexer.ml"
 
   | 3 ->
-# 414 "lexer.mll"
+# 429 "lexer.mll"
     (
       let a = Parser.expr_rparen token lexbuf in
       let s = xml_eq_value lexbuf in
       let l,r = xml_attributes lexbuf in
       ((a,s)::l, r)
     )
-# 6720 "lexer.ml"
+# 6734 "lexer.ml"
 
   | 4 ->
 let
-# 420 "lexer.mll"
+# 435 "lexer.mll"
                    a
-# 6726 "lexer.ml"
+# 6740 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 421 "lexer.mll"
+# 436 "lexer.mll"
     (
       let s = xml_eq_value lexbuf in
       let l,r = xml_attributes lexbuf in
       ((Ast.EString a,s)::l, r)
     )
-# 6734 "lexer.ml"
+# 6748 "lexer.ml"
 
   | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; 
       __ocaml_lex_xml_attributes_rec lexbuf __ocaml_lex_state
@@ -6741,22 +6755,22 @@ and __ocaml_lex_xml_eq_value_rec lexbuf __ocaml_lex_state =
   match Lexing.new_engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | 0 ->
 let
-# 428 "lexer.mll"
+# 443 "lexer.mll"
                                                                           s
-# 6747 "lexer.ml"
+# 6761 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_mem.(0) (lexbuf.Lexing.lex_curr_pos + -1) in
-# 429 "lexer.mll"
+# 444 "lexer.mll"
     (
       Ast.EString s
     )
-# 6753 "lexer.ml"
+# 6767 "lexer.ml"
 
   | 1 ->
-# 433 "lexer.mll"
+# 448 "lexer.mll"
     (
       Parser.expr_rparen token lexbuf
     )
-# 6760 "lexer.ml"
+# 6774 "lexer.ml"
 
   | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; 
       __ocaml_lex_xml_eq_value_rec lexbuf __ocaml_lex_state
@@ -6766,9 +6780,9 @@ and xml_spaces lexbuf =
 and __ocaml_lex_xml_spaces_rec lexbuf __ocaml_lex_state =
   match Lexing.engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | 0 ->
-# 438 "lexer.mll"
+# 453 "lexer.mll"
                 ( () )
-# 6772 "lexer.ml"
+# 6786 "lexer.ml"
 
   | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; 
       __ocaml_lex_xml_spaces_rec lexbuf __ocaml_lex_state
@@ -6779,28 +6793,28 @@ and __ocaml_lex_xml_comment_rec lexbuf __ocaml_lex_state =
   match Lexing.engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | 0 ->
 let
-# 441 "lexer.mll"
+# 456 "lexer.mll"
              s
-# 6785 "lexer.ml"
+# 6799 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos (lexbuf.Lexing.lex_start_pos + 3) in
-# 441 "lexer.mll"
+# 456 "lexer.mll"
                ( s )
-# 6789 "lexer.ml"
+# 6803 "lexer.ml"
 
   | 1 ->
 let
-# 442 "lexer.mll"
+# 457 "lexer.mll"
          s
-# 6795 "lexer.ml"
+# 6809 "lexer.ml"
 = Lexing.sub_lexeme_char lexbuf lexbuf.Lexing.lex_start_pos in
-# 442 "lexer.mll"
+# 457 "lexer.mll"
            ( (String.make 1 s) ^ (xml_comment lexbuf) )
-# 6799 "lexer.ml"
+# 6813 "lexer.ml"
 
   | 2 ->
-# 443 "lexer.mll"
+# 458 "lexer.mll"
         ( assert false )
-# 6804 "lexer.ml"
+# 6818 "lexer.ml"
 
   | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; 
       __ocaml_lex_xml_comment_rec lexbuf __ocaml_lex_state
@@ -6811,28 +6825,28 @@ and __ocaml_lex_xml_cdata_rec lexbuf __ocaml_lex_state =
   match Lexing.engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | 0 ->
 let
-# 446 "lexer.mll"
+# 461 "lexer.mll"
              s
-# 6817 "lexer.ml"
+# 6831 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos (lexbuf.Lexing.lex_start_pos + 3) in
-# 446 "lexer.mll"
+# 461 "lexer.mll"
                ( s )
-# 6821 "lexer.ml"
+# 6835 "lexer.ml"
 
   | 1 ->
 let
-# 447 "lexer.mll"
+# 462 "lexer.mll"
          s
-# 6827 "lexer.ml"
+# 6841 "lexer.ml"
 = Lexing.sub_lexeme_char lexbuf lexbuf.Lexing.lex_start_pos in
-# 447 "lexer.mll"
+# 462 "lexer.mll"
            ( (String.make 1 s) ^ (xml_cdata lexbuf) )
-# 6831 "lexer.ml"
+# 6845 "lexer.ml"
 
   | 2 ->
-# 448 "lexer.mll"
+# 463 "lexer.mll"
         ( assert false )
-# 6836 "lexer.ml"
+# 6850 "lexer.ml"
 
   | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; 
       __ocaml_lex_xml_cdata_rec lexbuf __ocaml_lex_state
@@ -6842,64 +6856,64 @@ and xml_str lexbuf =
 and __ocaml_lex_xml_str_rec lexbuf __ocaml_lex_state =
   match Lexing.engine __ocaml_lex_tables __ocaml_lex_state lexbuf with
       | 0 ->
-# 451 "lexer.mll"
+# 466 "lexer.mll"
              ( "&" ^ xml_str lexbuf )
-# 6848 "lexer.ml"
+# 6862 "lexer.ml"
 
   | 1 ->
-# 452 "lexer.mll"
+# 467 "lexer.mll"
              ( "<" ^ xml_str lexbuf )
-# 6853 "lexer.ml"
+# 6867 "lexer.ml"
 
   | 2 ->
-# 453 "lexer.mll"
+# 468 "lexer.mll"
              ( ">" ^ xml_str lexbuf )
-# 6858 "lexer.ml"
+# 6872 "lexer.ml"
 
   | 3 ->
-# 454 "lexer.mll"
+# 469 "lexer.mll"
              ( "'" ^ xml_str lexbuf )
-# 6863 "lexer.ml"
+# 6877 "lexer.ml"
 
   | 4 ->
-# 455 "lexer.mll"
+# 470 "lexer.mll"
              ( "\"" ^ xml_str lexbuf  )
-# 6868 "lexer.ml"
+# 6882 "lexer.ml"
 
   | 5 ->
 let
-# 456 "lexer.mll"
+# 471 "lexer.mll"
                              s
-# 6874 "lexer.ml"
+# 6888 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 456 "lexer.mll"
+# 471 "lexer.mll"
                                ( s ^ xml_str lexbuf )
-# 6878 "lexer.ml"
+# 6892 "lexer.ml"
 
   | 6 ->
 let
-# 457 "lexer.mll"
+# 472 "lexer.mll"
                                                            s
-# 6884 "lexer.ml"
+# 6898 "lexer.ml"
 = Lexing.sub_lexeme lexbuf lexbuf.Lexing.lex_start_pos lexbuf.Lexing.lex_curr_pos in
-# 457 "lexer.mll"
+# 472 "lexer.mll"
                                                              ( s ^ xml_str lexbuf )
-# 6888 "lexer.ml"
+# 6902 "lexer.ml"
 
   | 7 ->
 let
-# 458 "lexer.mll"
+# 473 "lexer.mll"
                 s
-# 6894 "lexer.ml"
+# 6908 "lexer.ml"
 = Lexing.sub_lexeme_char lexbuf lexbuf.Lexing.lex_start_pos in
-# 458 "lexer.mll"
+# 473 "lexer.mll"
                   ( (String.make 1 s) ^ xml_str lexbuf )
-# 6898 "lexer.ml"
+# 6912 "lexer.ml"
 
   | 8 ->
-# 459 "lexer.mll"
+# 474 "lexer.mll"
        ( "" )
-# 6903 "lexer.ml"
+# 6917 "lexer.ml"
 
   | __ocaml_lex_state -> lexbuf.Lexing.refill_buff lexbuf; 
       __ocaml_lex_xml_str_rec lexbuf __ocaml_lex_state

@@ -194,10 +194,20 @@ rule token = parse
           let (name,ls) = Parser.xmlStart xml_token lexbuf in
           Ast.xml_mode := false;
           XML (Ast.XmlTag (name,l, ls))
-        | l,true -> XML_SINGLE("", l)
+        | l,true ->
+          Ast.xml_mode := false;
+          XML_SINGLE("", l)
       end else token lexbuf
     }
-  | "/>" { if !Ast.xml_mode then XML_SINGLE("", []) else SLASH_GT }
+  | "/>"
+    {
+      if !Ast.xml_mode then
+        begin
+          Ast.xml_mode := false;
+          XML_SINGLE("", [])
+        end
+      else SLASH_GT
+    }
   | ">"
     {
       if !Ast.xml_mode then
@@ -335,7 +345,9 @@ rule token = parse
             let (name,ls) = Parser.xmlStart xml_token lexbuf in
             Ast.xml_mode := false;
             XML (Ast.XmlTag (name,(a,s)::l, ls))
-          | l,true -> XML_SINGLE("", (a,s)::l)
+          | l,true ->
+            Ast.xml_mode := false;
+            XML_SINGLE("", (a,s)::l)
         end
       else
         LBRACE
@@ -359,8 +371,11 @@ rule token = parse
           match xml_attributes lexbuf with
           | l,false ->
             let (name,ls) = Parser.xmlStart xml_token lexbuf in
+            Ast.xml_mode := false;
             XML (Ast.XmlTag (name, (Ast.EString a,s)::l, ls))
-          | l,true -> XML_SINGLE("", (Ast.EString a,s)::l)
+          | l,true ->
+            Ast.xml_mode := false;
+            XML_SINGLE("", (Ast.EString a,s)::l)
         end
       else
         VALID(a)
