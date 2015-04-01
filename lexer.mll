@@ -7,10 +7,15 @@ let unicodeEscape = '\\' 'u' hexDigit hexDigit hexDigit hexDigit
 
 let whiteSpace = ['\x20' '\x09' '\x0D' '\x0A']
 
-let upper = ['A' - 'Z' '$' '_'] (* and Unicode category Lu *)
-let lower = ['a' - 'z'] (* and Unicode category Ll *)
+(* and Unicode category Lu *)
+let upper = ['A' - 'Z' '$' '_']
 
-let letter = upper | lower (* and Unicode categories Lo, Lt, Nl *)
+(* and Unicode category Ll *)
+let lower = ['a' - 'z']
+
+(* and Unicode categories Lo, Lt, Nl *)
+let letter = upper | lower
+
 
 let digit = ['0' - '9']
 let paren = ['(' ')' '[' ']' '{' '}']
@@ -199,20 +204,21 @@ rule token = parse
           XML_SINGLE("", l)
       end else token lexbuf
     }
-  | "/>"
+  | "/>" as s
     {
       if !Ast.xml_mode then
         begin
           Ast.xml_mode := false;
           XML_SINGLE("", [])
         end
-      else SLASH_GT
+      else OP s
     }
   | ">" op* as s
     {
       if !Ast.xml_mode then
         begin
-          lexbuf.Lexing.lex_curr_pos <- lexbuf.Lexing.lex_curr_pos - (String.length s) + 1;
+          lexbuf.Lexing.lex_curr_pos <-
+            lexbuf.Lexing.lex_curr_pos - (String.length s) + 1;
           let (name,ls) = Parser.xmlStart xml_token lexbuf in
           Ast.xml_mode := false;
           XML (Ast.XmlTag (name,[], ls))
@@ -300,26 +306,25 @@ rule token = parse
   | ')' { RPAREN }
   | '[' { LBRACK }
   | ']' { RBRACK }
-  | '{'
-    {
-      if !Ast.xml_mode then
-        begin
-          Ast.xml_mode := false;
-          let a = Parser.expr_rparen token lexbuf in
-          Ast.xml_mode := true;
-          let s = xml_eq_value lexbuf in
-          match xml_attributes lexbuf with
-          | l,false ->
-            let (name,ls) = Parser.xmlStart xml_token lexbuf in
-            Ast.xml_mode := false;
-            XML (Ast.XmlTag (name,(a,s)::l, ls))
-          | l,true ->
-            Ast.xml_mode := false;
-            XML_SINGLE("", (a,s)::l)
-        end
-      else
-        LBRACE
-    }
+  | '{' {
+          if !Ast.xml_mode then
+            begin
+              Ast.xml_mode := false;
+              let a = Parser.expr_rparen token lexbuf in
+              Ast.xml_mode := true;
+              let s = xml_eq_value lexbuf in
+              match xml_attributes lexbuf with
+              | l,false ->
+                let (name,ls) = Parser.xmlStart xml_token lexbuf in
+                Ast.xml_mode := false;
+                XML (Ast.XmlTag (name,(a,s)::l, ls))
+              | l,true ->
+                Ast.xml_mode := false;
+                XML_SINGLE("", (a,s)::l)
+            end
+          else
+            LBRACE
+        }
   | '}' { RBRACE }
 
   | '+' { ADD }
@@ -351,25 +356,14 @@ rule token = parse
   | plainid as s { PLAINID(s) }
   | op as s { OP(s) }
   | eof { EOF }
-  | _
-    { failwith
-      (Printf.sprintf "unknown token %s near characters %d-%d"
-        (Lexing.lexeme lexbuf)
-        (Lexing.lexeme_start lexbuf)
-        (Lexing.lexeme_end lexbuf))
-    }
-
-and import = parse
-  | whiteSpace+ { import lexbuf }
-  | ['a' - 'z' 'A' - 'Z' '*' '.']* { Lexing.lexeme lexbuf }
-  | eof { Lexing.lexeme lexbuf }
-  | _
-    { failwith
-      (Printf.sprintf "unknown token %s near characters %d-%d"
-        (Lexing.lexeme lexbuf)
-        (Lexing.lexeme_start lexbuf)
-        (Lexing.lexeme_end lexbuf))
-    }
+  | _ {
+        Ast.xml_mode := false;
+        failwith
+        (Printf.sprintf "unknown token %s near characters %d-%d"
+          (Lexing.lexeme lexbuf)
+          (Lexing.lexeme_start lexbuf)
+          (Lexing.lexeme_end lexbuf))
+      }
 
 and comment = parse
   | "*/" { token lexbuf }
@@ -423,12 +417,20 @@ and xml_spaces = parse
 and xml_comment = parse
   | "-->" as s { s }
   | _ as s { (String.make 1 s) ^ (xml_comment lexbuf) }
-  | eof { assert false }
+  | eof
+    {
+      Ast.xml_mode := false;
+      assert false
+    }
 
 and xml_cdata = parse
   | "]]>" as s { s }
   | _ as s { (String.make 1 s) ^ (xml_cdata lexbuf) }
-  | eof { assert false }
+  | eof
+    {
+      Ast.xml_mode := false;
+      assert false
+    }
 
 and xml_str = parse
   | "&amp;"  { "&" ^ xml_str lexbuf }
