@@ -23,7 +23,8 @@ let delim = ['`' '\'' '"' '.' ';' ',']
 
 let opchar = ['~' '!' '@' '#' '%' '^' '*' '+' '-' '<' '>' '?' ':' '=' '&' '|' '\\' '/'] | ['\xC2'-'\xDF'] ['\x80'-'\xBF'] | ['\xE0'-'\xEF'] ['\x80'-'\xBF'] ['\x80'-'\xBF']
 
-(*  '\xc2' ['\xa6' '\xa9' '\xac' '\xae' '\xb0' - '\xb1'] |
+(*
+    '\xc2' ['\xa6' '\xa9' '\xac' '\xae' '\xb0' - '\xb1'] |
     '\xc3' ['\x97' '\xb7'] |
     '\xcf' '\xb6' |
     '\xd2' '\x82' |
@@ -99,14 +100,14 @@ let charEscapeSeq = '\\' ['b' 't' 'n' 'f' 'r' '"' '\'' '\\']
 let utf8 = ['\xC2' - '\xDF'] ['\x80' - '\xBF'] | ['\xE0' - '\xEF'] ['\x80' - '\xBF'] ['\x80' - '\xBF']
 (*
 let utf8 =
-    '\xc2' ['\x80' - '\xa5' '\xa7' - '\xa8' '\xaa' - '\xab' '\xad' '\xaf' '\xb2' - '\xbf'] |
-    '\xc3' ['\x80' - '\x96' '\x98' - '\xb6' '\xb8' - '\xbf'] |
-['\xc4' - '\xce' '\xd0' - '\xd1' '\xd3' - '\xd7' '\xd9' - '\xda' '\xdc' - '\xdf'] ['\x80' - '\xbf'] |
-['\xcf' - '\xdf'] ['\x80' - '\xb5' '\xb7' - '\xbf'] |
-'\xd2' ['\x80' - '\x81' '\x83' - '\xbf'] |
-'\xd8' ['\x80' - '\x85' '\x89' - '\x8d' '\x90' - '\xbf'] |
-'\xdb' ['\x80' - '\x9d' '\x9f' - '\xa8' '\xaa' - '\xbc' '\xbf'] |
-'\xe0' (
+  '\xc2' ['\x80' - '\xa5' '\xa7' - '\xa8' '\xaa' - '\xab' '\xad' '\xaf' '\xb2' - '\xbf'] |
+  '\xc3' ['\x80' - '\x96' '\x98' - '\xb6' '\xb8' - '\xbf'] |
+  ['\xc4' - '\xce' '\xd0' - '\xd1' '\xd3' - '\xd7' '\xd9' - '\xda' '\xdc' - '\xdf'] ['\x80' - '\xbf'] |
+  ['\xcf' - '\xdf'] ['\x80' - '\xb5' '\xb7' - '\xbf'] |
+  '\xd2' ['\x80' - '\x81' '\x83' - '\xbf'] |
+  '\xd8' ['\x80' - '\x85' '\x89' - '\x8d' '\x90' - '\xbf'] |
+  '\xdb' ['\x80' - '\x9d' '\x9f' - '\xa8' '\xaa' - '\xbc' '\xbf'] |
+  '\xe0' (
     ['\xa0' - '\xa6' '\xa8' - '\xac' '\xae' '\xb0' '\xb2' - '\xb4' '\xb6' - '\xbb' '\xbd'] ['\x80' - '\xbf'] |
     '\xa7' ['\x80' - '\xb9' '\xbb' - '\xbf'] |
     '\xad' ['\x80' - '\xaf' '\xb1' - '\xbf'] |
@@ -116,14 +117,14 @@ let utf8 =
     '\xbc' ['\x80' '\x84' - '\x92' '\x94' '\x98' - '\x99' '\xa0' - '\xb3' '\xb5' '\xb7' '\xb9' - '\xbf'] |
     '\xbe' ['\x80' - '\xbd'] |
     '\xbf' ['\x86' '\x8d' '\x90' - '\x94' '\x99' - '\xbf']) |
-'\xe1' (
+  '\xe1' (
     ['\x80' '\x81' '\x83' - '\x8d' '\x8f' - '\xa4' '\xa6' '\xa8' - '\xac' '\xae' - '\xbf'] ['\x80' - '\xbf'] |
     '\x82' ['\x80' - '\x9d' '\xa0' - '\xbf'] |
     '\x8e' ['\x80' - '\x8f' '\x9a' - '\xbf'] |
     '\xa5' ['\x81' - '\xbf'] |
     '\xa7' ['\x80' - '\x9d'] |
     '\xad' ['\x80' - '\xa0' '\xab' - '\xb3' '\xbd' - '\xbf']) |
-'\xe2' (
+  '\xe2' (
     ['\x80' '\x83' '\xae' - '\xb2' '\xb4' - '\xb9'] ['\x80' - '\xbf'] |
     '\x81' ['\x80' - '\x83' '\x85' - '\x91' '\x93' - '\xb9' '\xbd' - '\xbf'] |
     '\x82' ['\x80' - '\x89' '\x8d' - '\xbf'] |
@@ -147,7 +148,7 @@ let utf8 =
     '\xba' '\x9a' |
     '\xbb' ['\xb4' - '\xbf'] |
     '\xbf' ['\x96' - '\xaf' '\xbc' - '\xbf']) |
-'\xe3' (
+  '\xe3' (
     '\x80' ['\x80' - '\x83' '\x85' - '\x91' '\x94' - '\x9f' '\xa1' - '\xb5' '\xb8' - '\xbd'] |
     ['\x81' - '\x85' '\x90' - '\xbf'] ['\x80' - '\xbf'] |
     '\x86' ['\x80' - '\x8f' '\x92' - '\x95' '\xa0' - '\xbf'] |
@@ -156,13 +157,13 @@ let utf8 =
     '\x89' ['\x88' - '\x8f' '\x91' - '\x9f'] |
     '\x8a' ['\x80' - '\x89' '\xb1' - '\xbf'] |
     '\x8b' '\xbf') |
-['\xe4' - '\xe9' '\xeb' '\xec' '\xee'] ['\x80' - '\xbf'] ['\x80' - '\xbf'] |
-'\xea' (
+  ['\xe4' - '\xe9' '\xeb' '\xec' '\xee'] ['\x80' - '\xbf'] ['\x80' - '\xbf'] |
+  '\xea' (
     ['\x80' - '\x9f' '\xa1' - '\xa8' '\xaa' - '\xbf'] ['\x80' - '\xbf'] |
     '\xa0' ['\x80' - '\xa7' '\xac' - '\xb5' '\xb8' '\xba' - '\xbf'] |
     '\xa9' ['\x80' - '\xb6' '\xba' - '\xbf']) |
-'\xed' ['\x80' - '\x9f'] ['\x80' - '\xbf'] |
-'\xef' (
+  '\xed' ['\x80' - '\x9f'] ['\x80' - '\xbf'] |
+  '\xef' (
     ['\x80' - '\xab' '\xad' - '\xb6' '\xb8' '\xba' '\xbb' '\xbe'] ['\x80' - '\xbf'] |
     '\xac' ['\x80' - '\xa8' '\xaa' - '\xbf'] |
     '\xb7' ['\x80' - '\xbc' '\xbe' - '\xbf'] |
@@ -170,7 +171,7 @@ let utf8 =
     '\xbc' ['\x80' - '\x8a' '\x8c' - '\x9b' '\x9f' - '\xbf'] |
     '\xbd' ['\x80' - '\x9b' '\x9d' '\x9f' - '\xbf'] |
     '\xbf' ['\x80' - '\xa1' '\xa3' '\xa5' - '\xa7' '\xaf' - '\xbb' '\xbe'])
-    *)
+*)
 
 let op = opchar+
 let idrest = (letter | digit)* ('_' op)?
@@ -179,7 +180,8 @@ let nonZeroDigit =  ['1' - '9']
 let decimalNumeral = '0' | nonZeroDigit digit*
 let hexNumeral =  '0' ['x' 'X'] hexDigit+
 let digit =  '0' | nonZeroDigit
-let nl = "\r\n" | ['\n' '\r'] (* newlinecharacter *)
+(* newlinecharacter *)
+let nl = "\r\n" | ['\n' '\r']
 
 let exponentPart = ['E' 'e'] ['+' '-']? digit+
 let floatType    = ['F' 'f' 'D' 'd']
@@ -191,7 +193,7 @@ let valid = lower idrest
 let identchar = ['A' - 'Z' 'a' - 'z' '_' '0' - '9' ':' '-']
 
 rule token = parse
-  | whiteSpace+
+  | ['\x20' '\x09']+
     {
       if !Ast.xml_mode then begin
         match xml_attributes lexbuf with
@@ -240,6 +242,7 @@ rule token = parse
   | '\'' (printableChar | charEscapeSeq) '\'' as s { CharacterLiteral(String.get s 1) }
   | '"' stringElement* '"' as s { StringLiteral(s) }
   | "\"\"\"" multiLineChars "\"\"\"" as s { StringLiteral(s) }
+  | nl nl+ { SEMI }
   | nl { NL }
   | ';' { SEMI }
 
@@ -306,25 +309,26 @@ rule token = parse
   | ')' { RPAREN }
   | '[' { LBRACK }
   | ']' { RBRACK }
-  | '{' {
-          if !Ast.xml_mode then
-            begin
-              Ast.xml_mode := false;
-              let a = Parser.expr_rparen token lexbuf in
-              Ast.xml_mode := true;
-              let s = xml_eq_value lexbuf in
-              match xml_attributes lexbuf with
-              | l,false ->
-                let (name,ls) = Parser.xmlStart xml_token lexbuf in
-                Ast.xml_mode := false;
-                XML (Ast.XmlTag (name,(a,s)::l, ls))
-              | l,true ->
-                Ast.xml_mode := false;
-                XML_SINGLE("", (a,s)::l)
-            end
-          else
-            LBRACE
-        }
+  | '{'
+    {
+      if !Ast.xml_mode then
+        begin
+          Ast.xml_mode := false;
+          let a = Parser.expr_rparen token lexbuf in
+          Ast.xml_mode := true;
+          let s = xml_eq_value lexbuf in
+          match xml_attributes lexbuf with
+          | l,false ->
+            let (name,ls) = Parser.xmlStart xml_token lexbuf in
+            Ast.xml_mode := false;
+            XML (Ast.XmlTag (name,(a,s)::l, ls))
+          | l,true ->
+            Ast.xml_mode := false;
+            XML_SINGLE("", (a,s)::l)
+        end
+      else
+        LBRACE
+    }
   | '}' { RBRACE }
 
   | '+' { ADD }
@@ -356,14 +360,15 @@ rule token = parse
   | plainid as s { PLAINID(s) }
   | op as s { OP(s) }
   | eof { EOF }
-  | _ {
-        Ast.xml_mode := false;
-        failwith
-        (Printf.sprintf "unknown token %s near characters %d-%d"
-          (Lexing.lexeme lexbuf)
-          (Lexing.lexeme_start lexbuf)
-          (Lexing.lexeme_end lexbuf))
-      }
+  | _
+    {
+      Ast.xml_mode := false;
+      failwith
+      (Printf.sprintf "unknown token %s near characters %d-%d"
+        (Lexing.lexeme lexbuf)
+        (Lexing.lexeme_start lexbuf)
+        (Lexing.lexeme_end lexbuf))
+    }
 
 and comment = parse
   | "*/" { token lexbuf }
