@@ -22,6 +22,7 @@ open Ast
 %token RBRACK /* "]" */
 %token DEF /* "def" */
 %token OBJECT /* "object" */
+%token CLASS /* "class" */
 %token EOF
 
 %type <Ast.program> program
@@ -82,6 +83,7 @@ topStatSeq        : | topStat semi_topStat*
 
 semi_topStat      : | semi topStat { $2 }
 topStat           : | OBJECT id templateBody { Object ($2, $3) }
+                    | CLASS id templateBody { Class ($2, $3) }
                     | { Unit }
 templateBody      : | nl? LBRACE templateStat semi_templateStat* RBRACE { $3::$4 }
 semi_templateStat : | semi templateStat { $2 }
@@ -94,8 +96,8 @@ comma_param       : | COMMA param { $2 }
 param             : | id COLON type1 { ($1, $3) }
 
 type1             : | simpleType { $1 }
-simpleType        : | simpleType typeArgs { $1 }
-                    | stableId { $1 }
+simpleType        : | simpleType typeArgs { TArgs ($1,$2) }
+                    | stableId { TExp $1 }
 typeArgs          : | LBRACK types RBRACK { $2 }
 types             : | type1 comma_type* { $1::$2 }
 comma_type        : | COMMA type1 { $2 }

@@ -27,11 +27,19 @@ let () =
   test_string Parser.program Ast.show_program "
 
     object Obj {
-      def main():Unit = {
+      def main(argv:Array[String]):Unit = {
         System.out.println(\"Hello World\");
         System.out.println(\"Hello World\")
       }
     }
   ";
-
+  let buf = Lexing.from_string "
+    object Ooo {
+      def main(argv:Array[String]):Unit = {
+        System.out.println(\"Hello World\")
+        System.out.println(\"Hello World\")
+      }
+    }
+  " in
+  Tojava.f (Parser.program Lexer.token buf);
   Printf.printf "ok\n"

@@ -8,7 +8,9 @@ type e =
   | ETuple of e list
   | EGet of e * string
 [@@deriving show]
-type t = e
+type t =
+  | TExp of e
+  | TArgs of t * t list
 [@@deriving show]
 type tms =
   | TMSDef of string * (string * t) list * t * e
@@ -17,6 +19,7 @@ type tms =
 [@@deriving show]
 type p =
   | Object of string * tms list
+  | Class of string * tms list
   | Unit
 [@@deriving show]
 type program = p list
