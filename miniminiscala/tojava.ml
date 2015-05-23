@@ -68,6 +68,11 @@ let rec f_idts fp = function
 	| [(id,t)] -> fprintf fp "%a %s" f_t t id
 	| (id,t)::idts -> fprintf fp "%a %s, %a" f_t t id f_idts idts
 
+let rec f_id_of_idts fp = function
+	| [] -> ()
+	| [(id,t)] -> fprintf fp "%s" id
+	| (id,t)::idts -> fprintf fp "%s, %a" id f_id_of_idts idts
+
 let f_tms fp = function
 	| TMSUnit -> EUnit
 	| TMSExpr(e1) -> e1
@@ -79,13 +84,49 @@ let f_tms fp = function
 
 
 let f ps =
+	let f_class name tmss otmss =
+		let ch = open_out (name ^ ".java") in
+		let fp = formatter_of_out_channel ch in
+		(* 同名のオブジェクトがあれば、追加する *)
+		Format.fprintf fp "public class %s {\n" name;
+		List.iter (function
+			| TMSUnit -> ()
+			| TMSExpr(_) -> ()
+			| TMSDef(id, idts, t, _) ->
+				fprintf fp "\tstatic public %a %s(%a) {\n" f_t t id f_idts idts;
+				begin match t with
+				| TExp(EId "Unit") ->
+					fprintf fp "\t\t%s$.MODULE$.%s(%a);" name id f_id_of_idts idts
+				| _ ->
+					fprintf fp "\t\treturn %s$.MODULE$.%s(%a);" name id f_id_of_idts idts
+				end;
+				fprintf fp "}\n"
+
+		) otmss;
+		let adds = List.map (f_tms fp) tmss in
+		Format.fprintf fp "\tprivate %s() {\n" name;
+		List.iter (fun add -> Format.fprintf fp "%a;\n" f_e add) adds;
+		Format.fprintf fp "\t}\n";
+		Format.fprintf fp "}\n";
+		close_out ch
+	in
 	(* object から class へstaticを追加する。*)
 	List.iter (function
 	| Object(name, tmss) ->
 		let ch = open_out (name ^ "$.java") in
 		let fp = formatter_of_out_channel ch in
 		Format.fprintf fp "public final class %s$ {\n" name;
+
+		let hasCompanionClass =
+			List.exists (function
+				| Class(n,_) -> name = n
+				| _ -> false
+			) ps
+		in
 		(* classがあるかチェックしてなければ、追加する *)
+		if not hasCompanionClass then
+			f_class name [] tmss;
+
 		let adds = List.map (f_tms fp) tmss in
 
 		Format.fprintf fp "\tprivate %s$() {\n" name;
@@ -102,14 +143,16 @@ let f ps =
 
 	| Unit -> ()
 	| Class(name, tmss) ->
-		let ch = open_out (name ^ ".java") in
-		let fp = formatter_of_out_channel ch in
-		(* 同名のオブジェクトがあれば、追加する *)
-		Format.fprintf fp "public class %s {\n" name;
-		let adds = List.map (f_tms fp) tmss in
-		Format.fprintf fp "\tprivate Obj$() {\n";
-		List.iter (fun add -> Format.fprintf fp "%a;\n" f_e add) adds;
-		Format.fprintf fp "\t}\n";
-		Format.fprintf fp "}\n";
-		close_out ch
+		try
+			let optObj =
+				List.find (function
+					| Object(n,_) -> name = n
+					| _ -> false
+				) ps
+			in
+			match optObj with
+			| Object(n,otmss) -> f_class name tmss otmss
+			| _ -> assert false
+		with _ -> f_class name tmss []
+
 	) ps
